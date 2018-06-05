@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="pref_scanner_option_labels">
+        <item>@string/pref_white_list_label_google</item>
+        <item>@string/pref_white_list_label_cvedetails</item>
+        <item>@string/pref_white_list_label_checkpoint</item>
+        <item>@string/pref_white_list_label_helpnetsecurity</item>
+    </array>
+
+    <array name="pref_scanner_option_values">
+        <item>@string/pref_white_list_value_google</item>
+        <item>@string/pref_white_list_value_cvedetails</item>
+        <item>@string/pref_white_list_value_checkpoint</item>
+        <item>@string/pref_white_list_value_helpnetsecurity</item>
+    </array>
+
+
+
+</resources>
