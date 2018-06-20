@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@string/google_play"
+            android:text="@string/gp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/detailed_app_source_label"
             app:layout_constraintTop_toBottomOf="@+id/trust_level_label" />
@@ -166,7 +166,7 @@
             android:id="@+id/detailed_app_last_update_time"
             style="@style/AppDescription"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/undefined"
@@ -192,7 +192,7 @@
             android:id="@+id/requested_app_permissions"
             style="@style/AppDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
@@ -218,11 +218,11 @@
         <TextView
             android:id="@+id/granted_app_permissions"
             style="@style/AppDescription"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="76dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:text="@string/undefined"
+            android:layout_marginTop="16dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -301,7 +301,115 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/first_install_time_label" />
 
+        <TextView
+            android:id="@+id/gp_label"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginTop="16dp"
 
+            android:text="@string/google_play"
+            style="@style/AppDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trust_level" />
+
+        <TextView
+            android:id="@+id/gp_app_rating_label"
+            style="@style/AppDescription"
+            android:layout_width="59dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="72dp"
+
+            android:layout_marginTop="8dp"
+            android:text="@string/gp_rating"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gp_label" />
+
+        <TextView
+            android:id="@+id/gp_app_rating"
+            style="@style/AppDescription"
+            android:layout_width="58dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/gp_app_rating_label"
+            app:layout_constraintTop_toBottomOf="@+id/gp_label" />
+
+        <TextView
+            android:id="@+id/gp_downloads_label"
+            style="@style/AppDescription"
+            android:layout_width="59dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+
+            android:layout_marginTop="4dp"
+            android:text="@string/gp_installs"
+            app:layout_constraintEnd_toStartOf="@+id/gp_downloads"
+            app:layout_constraintTop_toBottomOf="@+id/gp_reviewers_label" />
+
+        <TextView
+            android:id="@+id/gp_downloads"
+            style="@style/AppDescription"
+            android:layout_width="58dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gp_reviewers" />
+
+        <TextView
+            android:id="@+id/gp_reviewers_label"
+            style="@style/AppDescription"
+            android:layout_width="60dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="72dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/gp_people"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gp_app_rating_label" />
+
+        <TextView
+            android:id="@+id/gp_reviewers"
+            style="@style/AppDescription"
+            android:layout_width="58dp"
+            android:layout_height="19dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+
+            app:layout_constraintStart_toEndOf="@+id/gp_reviewers_label"
+            app:layout_constraintTop_toBottomOf="@+id/gp_app_rating" />
+
+        <TextView
+            android:id="@+id/gp_update_time_label"
+            style="@style/AppDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="76dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/gp_update_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gp_downloads_label" />
+
+        <TextView
+            android:id="@+id/gp_update_time"
+            style="@style/AppDescription"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.166"
+            app:layout_constraintStart_toEndOf="@+id/gp_update_time_label"
+            app:layout_constraintTop_toBottomOf="@+id/gp_downloads" />
 
 
     </android.support.constraint.ConstraintLayout>

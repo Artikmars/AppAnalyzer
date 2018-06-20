@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,46 +46,32 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static String urlGoogle = " vulnerabilities android";
 
     public static List<AppList> installedApps = new ArrayList<>();
-    public static List<AppList> serverList = new ArrayList<>();
     public static String installedAppsString;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
     String lastRunTime;
     String appNameString, versionString;
-    private RecyclerView recyclerView;
-    private AppRecyclerViewAdapter appRecyclerViewAdapter;
-    private AppList appList;
+    private ArrayList<String> requestedPermissionsProtectionLevels;
+    private ArrayList<String> grantedPermissionsProtectionLevels;
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
-
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // webButton = findViewById(R.id.list_web_button);
-        recyclerView = findViewById(R.id.app_list);
-
-        //ListView userInstalledApps = findViewById(R.id.installed_app_list);
-
+        RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
-        // AppAdapter installedAppAdapter = new AppAdapter(MainActivity.this, installedApps);
-        // userInstalledApps.setAdapter(installedAppAdapter);
-        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
+        AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(appRecyclerViewAdapter);
         appRecyclerViewAdapter.notifyDataSetChanged();
-
         setupSharedPreferences();
         checkFirstRun();
     }
@@ -135,30 +123,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    /**
-     * The method sets link for each source depending on the preferences options
-     *
-     * @param source chosen source to be opened via Web Button
-     */
-
-    public void setLink(String source) {
-
-        if (source.equals(getString(R.string.pref_white_list_value_google))) {
-            url = "https://www.google.com/search?q=";
-            urlGoogle = " vulnerabilities android";
-        } else if (source.equals(getString(R.string.pref_white_list_value_cvedetails))) {
-            url = "https://www.cvedetails.com/google-search-results.php?q=";
-            urlGoogle = "";
-        } else if (source.equals(getString(R.string.pref_white_list_value_checkpoint))) {
-            url = "http://search.us.checkpoint.com/tmpl/Search?action=search&view=cp_search&reset=t&num=10&start=0&q=";
-            urlGoogle = "";
-        } else if (source.equals(getString(R.string.pref_white_list_value_helpnetsecurity))) {
-            url = "https://www.helpnetsecurity.com/?s=";
-            urlGoogle = "";
-        }
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -173,40 +137,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             startActivity(i);
             return true;
         }
-/*
-        if (id == R.id.action_send_to_server) {
-
-            if (isNetworkAvailable() && !serverList.isEmpty()) {
-
-                URL postUrl = null;
-                // url = new URL("http://192.168.5.4:80/test");
-                try {
-                    //postUrl = new URL(" http://httpbin.org/post");
-                    postUrl = new URL("http://192.168.5.4:80/search");
-                    //request = new Request.Builder().url(url).build();
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-                for (int i = 0; i < installedApps.size(); i++) {
-                    //sendToServerTask.execute(installedAppsListToString(installedApps, i));
-                    PostRequest postRequest = new PostRequest();
-                    postRequest.postToServer(installedAppsListToString(installedApps, i), postUrl);
-                    Log.i(TAG, "onFailure:  " + installedAppsListToString(installedApps, i));
-                }
-
-                //k = 0;
-                // installedAppsListToString(installedApps);
-            } else {
-                Log.i(TAG, "probably, serverList is empty or problems with a network: " + serverList.toString());
-            }
-        }
-*/
         return super.onOptionsItemSelected(item);
     }
-
-    //Android 7.1.2
     private String installedAppsListToString(List<AppList> installedApps, int k) {
 
         appNameString = installedApps.get(k).getName();
@@ -262,7 +194,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             PackageInfo p = packs.get(i);
             if ((!isSystemPackage(p))) {
 
-                appList = new AppList();
+                AppList appList = new AppList();
+                appList.setPackageName(p.packageName);
                 appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
                 appList.setVersion(p.versionName);
                 long lastUpdatedTimeLong = p.lastUpdateTime;
@@ -272,24 +205,35 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 Log.i(TAG, "packageName: " + packageName);
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
                 String appSource = getAppSource(appSourceType, p);
+
+              /*  if (appSource.equals("Google Play")){
+                    String url = "https://play.google.com/store/apps/details?id=" + packageName + "&hl=en";
+                    Log.i(TAG, "packageName: " + url);
+                    GooglePlayParser.getGPUpdateTime(url, packageName);}
+             */
+
                 appList.setAppSource(appSource);
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
+//                ArrayList<String> appRequestedPermissionsListArray = new ArrayList<>(Arrays.asList(appRequestedPermissionsArray));
 
                 if (appRequestedPermissionsArray != null) {
-                    StringBuilder buffer = new StringBuilder();
+                   /* StringBuilder buffer = new StringBuilder();
                     for (String each : appRequestedPermissionsArray)
                         buffer.append(", ").append(each);
-                    String appRequestedPermissions = buffer.deleteCharAt(0).toString();
-                    appList.setAppRequestedPermissions(appRequestedPermissions);
-                } else appList.setAppRequestedPermissions("null");
+                    String appRequestedPermissions = buffer.deleteCharAt(0).toString();*/
+                    //appList.setAppRequestedPermissions(appRequestedPermissionsListArray);
+                } else appList.setAppRequestedPermissions(null);
 
-                List <String> appGrantedPermissionsArray = getGrantedPermissions(packageName);
-                String grantedPermissions = null;
-                for (int k = 0; i < appGrantedPermissionsArray.size(); i++){
+                ArrayList<String> appGrantedPermissionsArray = new ArrayList<>(getGrantedPermissions(packageName));
+               /* String grantedPermissions = null;
+                for (int k = 0; i < appGrantedPermissionsArray.size(); i++) {
                     grantedPermissions = grantedPermissions + appGrantedPermissionsArray.get(k) + ", ";
-                }
-                appList.setAppGrantedPermissions(grantedPermissions);
-
+                }*/
+                //requestedPermissionsProtectionLevels = getPermissionsBaseTypes(appRequestedPermissionsListArray);
+               // grantedPermissionsProtectionLevels = getPermissionsBaseTypes(appGrantedPermissionsArray);
+               // appList.setRequestedPermissionsProtectionLevels(requestedPermissionsProtectionLevels);
+               // appList.setGrantedPermissionsProtectionLevels(grantedPermissionsProtectionLevels);
+            //    appList.setAppGrantedPermissions(appGrantedPermissionsArray);
 
 
                 long firstInstallTimeLong = p.firstInstallTime;
@@ -345,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         List<String> grantedPermissions = new ArrayList<>();
         try {
             PackageInfo pi = getPackageManager().getPackageInfo(appPackage, PackageManager.GET_PERMISSIONS);
+
             for (int i = 0; i < pi.requestedPermissions.length; i++) {
                 if ((pi.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0) {
                     grantedPermissions.add(pi.requestedPermissions[i]);
@@ -366,6 +311,36 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         return requestedPermissions;
     }
 
+
+    private ArrayList<String> getPermissionsBaseTypes( ArrayList<String> permissions) {
+
+        ArrayList <String> result = new ArrayList<>();
+        for (int i = 0; i < permissions.size(); i++) {
+            String protectionLevel;
+            Log.i(TAG, "getPermissionsBaseTypes: permission - " + permissions.get(i));
+            try {
+                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissions.get(i), PackageManager.GET_META_DATA);
+                switch (permissionInfo.protectionLevel) {
+                    case PermissionInfo.PROTECTION_NORMAL:
+                        protectionLevel = "normal";
+                        result.add(protectionLevel);
+                        break;
+                    case PermissionInfo.PROTECTION_DANGEROUS:
+                        protectionLevel = "dangerous";
+                        result.add(protectionLevel);
+                        break;
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < result.size(); i++){
+            Log.i(TAG, "getPermissionsBaseTypes: permissionsProtectionLevels - " + result.get(i));
+        }
+
+        return result;
+    }
 
     private String getAppSource(String appSourceType, PackageInfo p) {
         boolean isSystemApp = isSystemPackage(p);
@@ -405,20 +380,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.pref_white_list_key))) {
-            loadSourceFromPreferences(sharedPreferences);
-        }
+
     }
 
     private void loadSourceFromPreferences(SharedPreferences sharedPreferences) {
-        setLink(sharedPreferences.getString(getString(R.string.pref_white_list_key),
-                getString(R.string.pref_white_list_value_google)));
+
     }
 
     @Override
     public void onItemClick(int position) {
         AppList appList = installedApps.get(position);
         String appName = appList.getName();
+        String packageName = appList.getPackageName();
         String appVersion = appList.getVersion();
         Drawable appLogo = appList.getIcon();
         String firstInstallTime = appList.getFirstInstallTime();
@@ -426,11 +399,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         String lastUpdatedTime = appList.getLastUpdateTime();
         String appSource = appList.getAppSource();
         String trustLevel = appList.getTrustLevel();
-        String appRequestedPermissions = appList.getAppRequestedPermissions();
-        String appGrantedPermissions = appList.getAppGrantedPermissions();
+        ArrayList<String> appRequestedPermissions = appList.getAppRequestedPermissions();
+        ArrayList<String> appGrantedPermissions = appList.getAppGrantedPermissions();
+        ArrayList<String> requestedPermissionsProtectionLevel = appList.getRequestedPermissionsProtectionLevels();
+        ArrayList<String> grantedPermissionsProtectionLevel = appList.getGrantedPermissionsProtectionLevels();
 
         Intent intent = new Intent(this, AppDetailActivity.class);
         intent.putExtra("name", appName);
+        intent.putExtra("package name", packageName);
         intent.putExtra("version", appVersion);
         intent.putExtra("logo", drawableToByte(appLogo));
         intent.putExtra("install time", firstInstallTime);
@@ -438,8 +414,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         intent.putExtra("updated time", lastUpdatedTime);
         intent.putExtra("app source", appSource);
         intent.putExtra("trust level", trustLevel);
-        intent.putExtra("requested permissions", appRequestedPermissions);
-        intent.putExtra("granted permissions", appRequestedPermissions);
+
+        //  Bundle bundle = new Bundle();
+        //  bundle.putSerializable("requested permissions", (Serializable) appRequestedPermissions);
+        // bundle.putSerializable("granted permissions", (Serializable) appGrantedPermissions);
+        // intent.putExtras(bundle);
+        intent.putStringArrayListExtra("requested permissions", appRequestedPermissions);
+        intent.putStringArrayListExtra("granted permissions", appGrantedPermissions);
+        intent.putStringArrayListExtra("requested permissions protection levels", requestedPermissionsProtectionLevel);
+        intent.putStringArrayListExtra("granted permissions protection levels", grantedPermissionsProtectionLevel);
         startActivity(intent);
         //String popularityScore =
     }

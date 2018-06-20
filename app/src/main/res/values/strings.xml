@@ -6,6 +6,7 @@
     <string name="search">Search</string>
     <string name="pref_white_list_label">Source</string>
     <string name="trust_level_label">Offline Trust: </string>
+    <string name="google_play">Google Play </string>
 
     <string name="detailed_app_name">Telegram</string>
     <string name="detailed_app_version_label">version: </string>
@@ -15,7 +16,7 @@
     <string name="middle">middle</string>
     <string name="low">low</string>
     <string name="detailed_app_origin_source">Origin Source: </string>
-    <string name="google_play">GP</string>
+    <string name="gp">GP</string>
     <string name="amazon_store">Amazon Store</string>
     <string name="standard_apps">Standard Apps</string>
     <string name="undefined">Undefined</string>
@@ -29,6 +30,13 @@
     <string name="first_install_time">First Install Time: </string>
     <string name="requested_app_permissions">Requested Permissions: </string>
     <string name="granted_app_permissions">Granted Permissions: </string>
+
+    <string name="gp_rating">Rating: </string>
+    <string name="gp_people">People: </string>
+    <string name="gp_installs">Installs: </string>
+    <string name="gp_update_time">Updated: </string>
+
+
 
 
     <string name="pref_white_list_key" translatable="false">whitelist</string>

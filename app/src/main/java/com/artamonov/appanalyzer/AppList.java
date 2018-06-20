@@ -2,37 +2,107 @@ package com.artamonov.appanalyzer;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AppList {
 
     private String name;
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    private String packageName;
     private String version;
     private String lastUpdateTime;
     private String lastRunTime;
     private String firstInstallTime;
 
 
+    private String gpRating;
+    private String gpInstalls;
+    private String gpPeople;
+    private String gpUpdated;
+
+    public String getGpRating() {
+        return gpRating;
+    }
+
+    public void setGpRating(String gpRating) {
+        this.gpRating = gpRating;
+    }
+
+    public String getGpInstalls() {
+        return gpInstalls;
+    }
+
+    public void setGpInstalls(String gpInstalls) {
+        this.gpInstalls = gpInstalls;
+    }
+
+    public String getGpPeople() {
+        return gpPeople;
+    }
+
+    public void setGpPeople(String gpPeople) {
+        this.gpPeople = gpPeople;
+    }
+
+    public String getGpUpdated() {
+        return gpUpdated;
+    }
+
+    public void setGpUpdated(String gpUpdated) {
+        this.gpUpdated = gpUpdated;
+    }
+
     private Drawable icon;
     private byte[] byteIcon;
     private boolean isOnline;
     private String appSource;
     private String trustLevel;
-    private String appRequestedPermissions;
+    private ArrayList<String> appRequestedPermissions;
 
-    public String getAppGrantedPermissions() {
+    private ArrayList<String> appGrantedPermissions;
+    private ArrayList<String> requestedPermissionsProtectionLevels;
+
+    public ArrayList<String> getRequestedPermissionsProtectionLevels() {
+        return requestedPermissionsProtectionLevels;
+    }
+
+    public void setRequestedPermissionsProtectionLevels(ArrayList<String> requestedPermissionsProtectionLevels) {
+        this.requestedPermissionsProtectionLevels = requestedPermissionsProtectionLevels;
+    }
+
+    public ArrayList<String> getGrantedPermissionsProtectionLevels() {
+        return grantedPermissionsProtectionLevels;
+    }
+
+    public void setGrantedPermissionsProtectionLevels(ArrayList<String> grantedPermissionsProtectionLevels) {
+        this.grantedPermissionsProtectionLevels = grantedPermissionsProtectionLevels;
+    }
+
+    private ArrayList<String> grantedPermissionsProtectionLevels;
+
+    public ArrayList<String> getAppGrantedPermissions() {
         return appGrantedPermissions;
     }
 
-    public void setAppGrantedPermissions(String appGrantedPermissions) {
+    public void setAppGrantedPermissions(ArrayList<String> appGrantedPermissions) {
         this.appGrantedPermissions = appGrantedPermissions;
     }
 
-    private String appGrantedPermissions;
 
-    public String getAppRequestedPermissions() {
+    public ArrayList<String> getAppRequestedPermissions() {
         return appRequestedPermissions;
     }
 
-    public void setAppRequestedPermissions(String appRequestedPermissions) {
+    public void setAppRequestedPermissions(ArrayList<String> appRequestedPermissions) {
         this.appRequestedPermissions = appRequestedPermissions;
     }
 
