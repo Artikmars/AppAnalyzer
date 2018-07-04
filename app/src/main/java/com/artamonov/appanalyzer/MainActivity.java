@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public long lastTimeExecuted;
     String lastRunTime;
     String appNameString, versionString;
+    public static AppList appList;
     private ArrayList<String> requestedPermissionsProtectionLevels;
     private ArrayList<String> grantedPermissionsProtectionLevels;
 
@@ -389,41 +390,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onItemClick(int position) {
-        AppList appList = installedApps.get(position);
-        String appName = appList.getName();
-        String packageName = appList.getPackageName();
-        String appVersion = appList.getVersion();
-        Drawable appLogo = appList.getIcon();
-        String firstInstallTime = appList.getFirstInstallTime();
-        String lastRunTime = appList.getLastRunTime();
-        String lastUpdatedTime = appList.getLastUpdateTime();
-        String appSource = appList.getAppSource();
-        String trustLevel = appList.getTrustLevel();
+        appList = installedApps.get(position);
+        Intent intent = new Intent(this, AppDetailActivity.class);
+        intent.putExtra("position", position);
+        intent.putExtra("logo", drawableToByte(appList.getIcon()));
+        startActivity(intent);
+  /*
         ArrayList<String> appRequestedPermissions = appList.getAppRequestedPermissions();
         ArrayList<String> appGrantedPermissions = appList.getAppGrantedPermissions();
         ArrayList<String> requestedPermissionsProtectionLevel = appList.getRequestedPermissionsProtectionLevels();
-        ArrayList<String> grantedPermissionsProtectionLevel = appList.getGrantedPermissionsProtectionLevels();
+        ArrayList<String> grantedPermissionsProtectionLevel = appList.getGrantedPermissionsProtectionLevels();*/
 
-        Intent intent = new Intent(this, AppDetailActivity.class);
-        intent.putExtra("name", appName);
-        intent.putExtra("package name", packageName);
-        intent.putExtra("version", appVersion);
-        intent.putExtra("logo", drawableToByte(appLogo));
-        intent.putExtra("install time", firstInstallTime);
-        intent.putExtra("run time", lastRunTime);
-        intent.putExtra("updated time", lastUpdatedTime);
-        intent.putExtra("app source", appSource);
-        intent.putExtra("trust level", trustLevel);
+
+      /*  intent.putStringArrayListExtra("requested permissions", appRequestedPermissions);
+        intent.putStringArrayListExtra("granted permissions", appGrantedPermissions);
+        intent.putStringArrayListExtra("requested permissions protection levels", requestedPermissionsProtectionLevel);
+        intent.putStringArrayListExtra("granted permissions protection levels", grantedPermissionsProtectionLevel);
+        startActivity(intent);*/
 
         //  Bundle bundle = new Bundle();
         //  bundle.putSerializable("requested permissions", (Serializable) appRequestedPermissions);
         // bundle.putSerializable("granted permissions", (Serializable) appGrantedPermissions);
         // intent.putExtras(bundle);
-        intent.putStringArrayListExtra("requested permissions", appRequestedPermissions);
-        intent.putStringArrayListExtra("granted permissions", appGrantedPermissions);
-        intent.putStringArrayListExtra("requested permissions protection levels", requestedPermissionsProtectionLevel);
-        intent.putStringArrayListExtra("granted permissions protection levels", grantedPermissionsProtectionLevel);
-        startActivity(intent);
         //String popularityScore =
     }
 }

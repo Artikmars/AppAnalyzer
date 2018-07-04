@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/gp_app_rating_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/gp_rating"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gp_app_rating"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold"
+        android:text="@string/undefined"
+        app:layout_constraintStart_toEndOf="@+id/gp_app_rating_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gp_downloads_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/gp_installs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gp_reviewers_label" />
+
+    <TextView
+        android:id="@+id/gp_downloads"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:text="@string/undefined"
+        app:layout_constraintStart_toEndOf="@+id/gp_downloads_label"
+        app:layout_constraintTop_toBottomOf="@+id/gp_reviewers_label" />
+
+    <TextView
+        android:id="@+id/gp_reviewers_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/gp_people"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gp_app_rating_label" />
+
+    <TextView
+        android:id="@+id/gp_reviewers"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/undefined"
+        android:layout_marginTop="12dp"
+        android:textStyle="bold"
+
+        app:layout_constraintStart_toEndOf="@+id/gp_reviewers_label"
+        app:layout_constraintTop_toBottomOf="@+id/gp_app_rating" />
+
+    <TextView
+        android:id="@+id/gp_update_time_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/gp_update_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gp_downloads_label" />
+
+    <TextView
+        android:id="@+id/gp_update_time"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:text="@string/undefined"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/gp_update_time_label"
+        app:layout_constraintTop_toBottomOf="@+id/gp_downloads" />
+
+</android.support.constraint.ConstraintLayout>

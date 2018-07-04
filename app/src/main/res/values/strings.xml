@@ -8,6 +8,11 @@
     <string name="trust_level_label">Offline Trust: </string>
     <string name="google_play">Google Play </string>
 
+    <string name="first_tab">Manifest Data</string>
+    <string name="second_tab">Google Play </string>
+    <string name="third_tab">Permissions</string>
+
+
     <string name="detailed_app_name">Telegram</string>
     <string name="detailed_app_version_label">version: </string>
     <string name="detailed_app_version">1.54</string>
