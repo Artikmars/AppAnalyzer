@@ -21,7 +21,7 @@ public class AppRepository {
         appList = appDao.getAllAps();
     }
 
-    static LiveData<AppList> getGpData(LiveData<AppList> app) {
+    public static LiveData<AppList> getGpData(LiveData<AppList> app) {
         gpDataApp = app;
         return gpDataApp;
     }
@@ -32,6 +32,11 @@ public class AppRepository {
 
     public void insert(AppList app) {
         new insertAsyncTask(appDao).execute(app);
+    }
+
+    public void update(String packageName, String gpRating, String gpPeople, String gpInstalls, String gpUpdated) {
+        // new updateGPDataAsyncTask(appDao).execute(packageName, gpRating, gpPeople, gpInstalls, gpUpdated);
+        appDao.update(packageName, gpRating, gpPeople, gpInstalls, gpUpdated);
     }
 
     public LiveData<AppList> query(String packageName) {
@@ -53,26 +58,24 @@ public class AppRepository {
             return null;
         }
     }
+}
 
-    private static class queryGPDataAsyncTask extends AsyncTask<String, Void, LiveData<AppList>> {
-
-        public QueryAsyncResponse delegate = null;
+  /*  private static class updateGPDataAsyncTask extends AsyncTask<String, Void, LiveData<AppList>> {
         private AppDao taskDao;
 
-        queryGPDataAsyncTask(AppDao dao) {
+        updateGPDataAsyncTask(AppDao dao) {
             taskDao = dao;
         }
 
         @Override
         protected LiveData<AppList> doInBackground(String... packageName) {
-            return taskDao.getGpData(packageName[0]);
+           return taskDao.update(packageName);
         }
 
         @Override
         protected void onPostExecute(LiveData<AppList> app) {
             super.onPostExecute(app);
             //getGpData(app);
-            // delegate.processFinish(app);
         }
     }
-}
+}*/

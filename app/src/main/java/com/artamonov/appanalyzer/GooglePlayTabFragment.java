@@ -1,5 +1,6 @@
 package com.artamonov.appanalyzer;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.artamonov.appanalyzer.AppDetailActivity.appGPApp;
 import static com.artamonov.appanalyzer.MainActivity.appList;
 
 public class GooglePlayTabFragment extends Fragment {
@@ -35,6 +37,8 @@ public class GooglePlayTabFragment extends Fragment {
     public static Element content;
     public static Element content2;
     static ArrayList<AppList> gpList = new ArrayList<>();
+    static AppDetailViewModel appDetailFragmentViewModel;
+    public AppList appFromDB;
     @BindView(R.id.gp_app_rating_label)
     TextView tvRatingLabel;
     @BindView(R.id.gp_downloads_label)
@@ -43,18 +47,19 @@ public class GooglePlayTabFragment extends Fragment {
     TextView tvPeopleLabel;
     @BindView(R.id.gp_update_time_label)
     TextView tvUpdatedLabel;
-
     private TextView tvRating;
     private TextView tvInstalls;
     private TextView tvPeople;
     private TextView tvUpdated;
     private TextView tvScore;
-
+    private AppList parsedAppList;
 
     public static GooglePlayTabFragment newInstance() {
         GooglePlayTabFragment fragment = new GooglePlayTabFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        Log.w(MainActivity.TAG, "newInstance");
+
 
         return fragment;
     }
@@ -68,9 +73,58 @@ public class GooglePlayTabFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.w(MainActivity.TAG, "onAttach");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.w(MainActivity.TAG, "onDetach");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.w(MainActivity.TAG, "onDetach");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.w(MainActivity.TAG, "onPause");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.w(MainActivity.TAG, "onActivityCreated");
+        appDetailFragmentViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
+
+        if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+            Log.w(MainActivity.TAG, " Internet - yes, GP - yes");
+            ParseTask parseTask = new ParseTask();
+            parseTask.execute();
+        }
+
+        if (!isNetworkAvailable(getActivity()) && appGPApp != null) {
+            Log.w(MainActivity.TAG, " App exists on DB: " + appGPApp.getGpRating());
+            populateViewsFromDB();
+        }
+
+       /* if (appGPApp == null && !isNetworkAvailable(getActivity())){
+            Log.w(MainActivity.TAG, " AppDetail does not exist on DB: inserting to DB...");
+            appDetailFragmentViewModel.insert(parsedAppList);
+
+        }*/
+
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
+        Log.w(MainActivity.TAG, "setUserVisibleHint");
         /*AppDetailActivity.appDetailViewModel.getAllApps().observe(this, new Observer<List<AppList>>() {
             @Override
             public void onChanged(@Nullable final List<AppList> words) {
@@ -97,16 +151,14 @@ public class GooglePlayTabFragment extends Fragment {
                 return;
             }
 
-            if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
-                ParseTask parseTask = new ParseTask();
-                parseTask.execute();
-            }
+
         }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.w(MainActivity.TAG, "onCreateView");
         View view = inflater.inflate(R.layout.google_play_tab, container, false);
         ButterKnife.bind(view);
         tvRating = view.findViewById(R.id.gp_app_rating);
@@ -119,14 +171,19 @@ public class GooglePlayTabFragment extends Fragment {
     }
 
     public void populateViews() throws ParseException {
-        Log.w(MainActivity.TAG, " in populateViews ");
-        tvRating.setText(gpList.get(0).getGpRating());
-        tvInstalls.setText(gpList.get(0).getGpInstalls());
-        tvPeople.setText(gpList.get(0).getGpPeople());
-        tvUpdated.setText(gpList.get(0).getGpUpdated());
+        if (parsedAppList != null) {
+
+            Log.w(MainActivity.TAG, " in populateViews: " + parsedAppList.getGpRating());
+            tvRating.setText(parsedAppList.getGpRating());
+            tvInstalls.setText(parsedAppList.getGpInstalls());
+            tvPeople.setText(parsedAppList.getGpPeople());
+            tvUpdated.setText(parsedAppList.getGpUpdated());
         tvScore.setText(AppDetailActivity.getSimplifiedTrustLevel(appList.getAppSource(),
-                gpList.get(0).getGpInstalls(),
-                gpList.get(0).getGpPeople(), gpList.get(0).getGpRating()));
+                parsedAppList.getGpInstalls(),
+                parsedAppList.getGpPeople(), parsedAppList.getGpRating()));
+        } else {
+            Log.w(MainActivity.TAG, " in populateViews: list is empty ");
+        }
        /*TextView trustLevel = getActivity().findViewById(R.id.trust_level);
         trustLevel.setText(AppDetailActivity.getSimplifiedTrustLevel(MainActivity.appList.getAppSource(),
                 MainActivity.appList.getGpInstalls(),
@@ -135,16 +192,15 @@ public class GooglePlayTabFragment extends Fragment {
 
     public void populateViewsFromDB() {
 
-        if (AppDetailActivity.appGPApp != null) {
-            Log.w(MainActivity.TAG, " in populateViewsFromDB: AppDetailActivity.appGPApp.getGpRating() " +
-                    AppDetailActivity.appGPApp.getGpRating());
-            tvRating.setText(AppDetailActivity.appGPApp.getGpRating());
-            tvInstalls.setText(AppDetailActivity.appGPApp.getGpInstalls());
-            tvPeople.setText(AppDetailActivity.appGPApp.getGpPeople());
-            tvUpdated.setText(AppDetailActivity.appGPApp.getGpUpdated());
-        } else {
-            Log.w(MainActivity.TAG, " in populateViewsFromDB: AppDetailActivity.appGPApp is Empty ");
+        if (appGPApp != null) {
+            Log.w(MainActivity.TAG, " in populateViewsFromDB: appFromDB.getGpRating() " +
+                    appGPApp.getGpRating());
+            tvRating.setText(appGPApp.getGpRating());
+            tvInstalls.setText(appGPApp.getGpInstalls());
+            tvPeople.setText(appGPApp.getGpPeople());
+            tvUpdated.setText(appGPApp.getGpUpdated());
         }
+
 
 //            tvScore.setText(AppDetailActivity.getSimplifiedTrustLevel(AppDetailActivity.appGPApp.getAppSource(),
         //          AppDetailActivity.appGPApp.getGpInstalls(),
@@ -211,16 +267,33 @@ public class GooglePlayTabFragment extends Fragment {
     public class ParseTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPostExecute(Void result) {
+            Log.w(MainActivity.TAG, "onPostExecute ");
             try {
                 populateViews();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            Log.w(MainActivity.TAG, "onPostExecute: parsedAppList: " + parsedAppList.getGpPeople());
+            appDetailFragmentViewModel.insert(parsedAppList);
+          /* if (AppDetailActivity.appGPApp != null) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.w(MainActivity.TAG, " Run Executor for Updating ..." + parsedAppList.getGpRating());
+                        appDetailFragmentViewModel.update(appList.getPackageName(), parsedAppList.getGpRating(),
+                                parsedAppList.getGpPeople(), parsedAppList.getGpInstalls(), parsedAppList.getGpUpdated());
+                    }
+                });
+            } else {
+                appDetailFragmentViewModel.insert(parsedAppList);
+            }*/
+
+
         }
 
         @Override
         protected Void doInBackground(Void... strings) {
-            Log.i(MainActivity.TAG, "doInBackground ");
+            Log.w(MainActivity.TAG, "doInBackground ");
             gpList = new ArrayList<>();
             String gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() + "&hl=en";
             try {
@@ -260,22 +333,47 @@ public class GooglePlayTabFragment extends Fragment {
                     Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
                 }
 
-                AppList appList = new AppList();
-                appList.setGpRating(gpRating);
-                appList.setGpPeople(gpRatingPeopleAmount);
-                appList.setGpInstalls(gpInstalls);
-                appList.setGpUpdated(gpUpdatedTime);
+                parsedAppList = new AppList();
+                parsedAppList.setGpRating(gpRating);
+                parsedAppList.setGpPeople(gpRatingPeopleAmount);
+                parsedAppList.setGpInstalls(gpInstalls);
+                parsedAppList.setGpUpdated(gpUpdatedTime);
+                parsedAppList.setPackageName(MainActivity.appList.getPackageName());
 
-                Log.i(MainActivity.TAG, "parser:  " + gpRating + " " + gpRatingPeopleAmount + " " + gpInstalls + " " + gpUpdatedTime);
-                gpList.add(appList);
+                Log.w(MainActivity.TAG, "parser:  " + gpRating + " " + gpRatingPeopleAmount + " " + gpInstalls + " " + gpUpdatedTime);
+                gpList.add(parsedAppList);
 
+
+                final AppList application = new AppList(parsedAppList.getPackageName(), parsedAppList.getVersion(),
+                        gpInstalls, gpRatingPeopleAmount, gpRating, gpUpdatedTime);
+
+
+              /* appDetailFragmentViewModel.getGpData(appList.getPackageName()).observe(this, new Observer<AppList>() {
+                    @Override
+                    public void onChanged(@Nullable final AppList logList) {
+                        // Update the cached copy of the applications in the adapter.
+                        if (logList != null) {
+                            Log.w(MainActivity.TAG, " AppDetail: onChanged: " + logList.getGpRating());
+                            AppDetailActivity.appDetailViewModel.update(appList.getPackageName(), appList.getGpRating(),
+                                    appList.getGpPeople(), appList.getGpInstalls(), appList.getGpUpdated());
+
+                        } else {
+                            Log.w(MainActivity.TAG, " AppDetail: onChanged: logList is Empty");
+                            AppDetailActivity.appDetailViewModel.insert(appList);
+                        }
+
+                    }
+                });*/
+
+
+
+                /*
                 AppList application = new AppList(MainActivity.appList.getPackageName(), MainActivity.appList.getVersion(),
                         gpInstalls, gpRatingPeopleAmount, gpRating, gpUpdatedTime);
                 Log.i(MainActivity.TAG, "   AppList application :  " + application);
                 Log.i(MainActivity.TAG, "   AppList application :  " + application.getPackageName());
-                AppDetailActivity.appDetailViewModel.insert(application);
+                AppDetailActivity.appDetailViewModel.insert(application);*/
 
-                gpList.add(appList);
 
                 /*  Elements elements = document.body().select("*");
                 Log.i(MainActivity.TAG, "GP Loop ");

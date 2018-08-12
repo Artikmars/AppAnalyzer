@@ -28,13 +28,23 @@ public abstract class AppDatabase extends RoomDatabase {
                     // Create database here
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "Application")
-                            //.addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
+                            // .addCallback(sRoomDatabaseCallback)
+                            //  .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
+   /* private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE 'Application' ADD COLUMN 'packageName' INTEGER NOT NULL");
+            database.execSQL("ALTER TABLE 'Application' ADD COLUMN 'packageName' INTEGER PRIMARY_KEY");
+        }
+    };*/
 
     public abstract AppDao appDao();
 

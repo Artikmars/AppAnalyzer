@@ -4,12 +4,15 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "Application")
 public class AppList {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    // @PrimaryKey(autoGenerate = true)
+    // private int id;
     private String name;
+    @PrimaryKey
+    @NonNull
     private String packageName;
     private String version;
     private String lastUpdateTime;
@@ -30,7 +33,7 @@ public class AppList {
     private ArrayList<String> requestedPermissionsProtectionLevels;
     private ArrayList<String> grantedPermissionsProtectionLevels;*/
 
-    @Ignore
+  /*  @Ignore
     public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
                    String gpRating, String gpUpdated) {
         this.packageName = packageName;
@@ -39,11 +42,11 @@ public class AppList {
         this.gpPeople = gpPeople;
         this.gpRating = gpRating;
         this.gpUpdated = gpUpdated;
-    }
+    }*/
 
-    public AppList(int id, String packageName, String versionName, String gpInstalls, String gpPeople,
+    public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
                    String gpRating, String gpUpdated) {
-        this.id = id;
+        //  this.id = id;
         this.packageName = packageName;
         this.version = versionName;
         this.gpInstalls = gpInstalls;
@@ -56,13 +59,13 @@ public class AppList {
 
     }
 
-    public Integer getId() {
-        return id;
-    }
+    // public Integer getId() {
+    //    return id;
+    //  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    // public void setId(Integer id) {
+    //    this.id = id;
+    // }
 
     public String getPackageName() {
         return packageName;

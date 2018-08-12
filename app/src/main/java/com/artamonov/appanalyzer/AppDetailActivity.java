@@ -93,18 +93,19 @@ public class AppDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_app_analyzer);
         ButterKnife.bind(this);
-/*
-    appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
+
+     /*   appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
         appDetailViewModel.getAllApps().observe(this, new Observer<List<AppList>>() {
             @Override
             public void onChanged(@Nullable final List<AppList> logList) {
                 // Update the cached copy of the applications in the adapter.
                 for (int i = 0; i < logList.size(); i++) {
-                    Log.i(MainActivity.TAG, "   LiveData<List<AppList>> from DB:  " + logList.get(i).getGpPeople());
+                    Log.w(MainActivity.TAG, "   LiveData<List<AppList>> from DB:  " + logList.get(i).getGpPeople());
                 }
             }
         });*/
 
+        //WORKABLE
 
         appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
         appDetailViewModel.getGpData(MainActivity.appList.getPackageName()).observe(this, new Observer<AppList>() {
@@ -112,10 +113,11 @@ public class AppDetailActivity extends AppCompatActivity {
             public void onChanged(@Nullable final AppList logList) {
                 // Update the cached copy of the applications in the adapter.
                 if (logList != null) {
-                    Log.w(MainActivity.TAG, " AppDetail: onChanged: " + logList.getGpRating());
+                    Log.w(MainActivity.TAG, " AppDetail: onChanged: Rating from DB: " + logList.getGpRating());
+                    Log.w(MainActivity.TAG, " AppDetail: onChanged: Rating from DB: toString:" + logList.toString());
                     appGPApp = logList;
                 } else {
-                    Log.w(MainActivity.TAG, " AppDetail: onChanged: logList is Empty");
+                    Log.w(MainActivity.TAG, " AppDetail: onChanged: App does not exist in DB");
                     appGPApp = null;
                 }
 

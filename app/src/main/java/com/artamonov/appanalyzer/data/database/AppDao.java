@@ -15,11 +15,11 @@ public interface AppDao {
     void insert(AppList application);
 
     //@Update(onConflict = OnConflictStrategy.REPLACE)
-    // void update(AppList application);
+    // void query(AppList application);
 
-    //@Query("UPDATE Application SET gpRating = :gpRating, gpPeople = :gpPeople, gpInstalls = :gpInstalls, gpUpdated = :gpUpdated " +
-    //        "WHERE packageName =:packageName")
-    // void update(String packageName, String gpRating, String gpPeople, String gpInstalls, String gpUpdated);
+    @Query("UPDATE Application SET gpRating = :gpRating, gpPeople = :gpPeople, gpInstalls = :gpInstalls, gpUpdated = :gpUpdated " +
+            "WHERE packageName =:packageName")
+    void update(String packageName, String gpRating, String gpPeople, String gpInstalls, String gpUpdated);
 
     @Query("DELETE FROM Application")
     void deleteAll();
@@ -28,7 +28,6 @@ public interface AppDao {
     LiveData<List<AppList>> getAllAps();
 
     @Query("SELECT * FROM Application WHERE packageName = :packageName ")
-        // List<AppList> getGpData(String packageName);
     LiveData<AppList> getGpData(String packageName);
 
 }

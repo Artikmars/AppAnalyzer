@@ -34,4 +34,8 @@ public class AppDetailViewModel extends AndroidViewModel {
         appRepository.insert(application);
     }
 
+    public void update(String packageName, String gpRating, String gpPeople, String gpInstalls, String gpUpdated) {
+        appRepository.update(packageName, gpRating, gpPeople, gpInstalls, gpUpdated);
+    }
+
 }
