@@ -27,10 +27,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.artamonov.appanalyzer.data.database.AppList;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -47,13 +48,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public static List<AppList> installedApps = new ArrayList<>();
     public static String installedAppsString;
+    public static AppList appList;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
     String lastRunTime;
     String appNameString, versionString;
-    public static AppList appList;
     private ArrayList<String> requestedPermissionsProtectionLevels;
     private ArrayList<String> grantedPermissionsProtectionLevels;
+
+    private AppDetailViewModel appDetailViewModel;
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -69,12 +72,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
         RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
-        AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
+        final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(appRecyclerViewAdapter);
         appRecyclerViewAdapter.notifyDataSetChanged();
+
+       /* appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
+        appDetailViewModel.getAllApps().observe(this, new Observer<List<AppList>>() {
+            @Override
+            public void onChanged(@Nullable final List<AppList> words) {
+                // Update the cached copy of the applications in the adapter.
+                appRecyclerViewAdapter.setAppList(words);
+            }
+        });*/
+
         setupSharedPreferences();
         checkFirstRun();
+
+
     }
 
     @Override
@@ -140,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         return super.onOptionsItemSelected(item);
     }
+
     private String installedAppsListToString(List<AppList> installedApps, int k) {
 
         appNameString = installedApps.get(k).getName();
@@ -223,18 +239,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         buffer.append(", ").append(each);
                     String appRequestedPermissions = buffer.deleteCharAt(0).toString();*/
                     //appList.setAppRequestedPermissions(appRequestedPermissionsListArray);
-                } else appList.setAppRequestedPermissions(null);
+                }
+                // else {appList.setAppRequestedPermissions(null);}
 
-                ArrayList<String> appGrantedPermissionsArray = new ArrayList<>(getGrantedPermissions(packageName));
+                // ArrayList<String> appGrantedPermissionsArray = new ArrayList<>(getGrantedPermissions(packageName));
+
                /* String grantedPermissions = null;
                 for (int k = 0; i < appGrantedPermissionsArray.size(); i++) {
                     grantedPermissions = grantedPermissions + appGrantedPermissionsArray.get(k) + ", ";
                 }*/
                 //requestedPermissionsProtectionLevels = getPermissionsBaseTypes(appRequestedPermissionsListArray);
-               // grantedPermissionsProtectionLevels = getPermissionsBaseTypes(appGrantedPermissionsArray);
-               // appList.setRequestedPermissionsProtectionLevels(requestedPermissionsProtectionLevels);
-               // appList.setGrantedPermissionsProtectionLevels(grantedPermissionsProtectionLevels);
-            //    appList.setAppGrantedPermissions(appGrantedPermissionsArray);
+                // grantedPermissionsProtectionLevels = getPermissionsBaseTypes(appGrantedPermissionsArray);
+                // appList.setRequestedPermissionsProtectionLevels(requestedPermissionsProtectionLevels);
+                // appList.setGrantedPermissionsProtectionLevels(grantedPermissionsProtectionLevels);
+                //    appList.setAppGrantedPermissions(appGrantedPermissionsArray);
 
 
                 long firstInstallTimeLong = p.firstInstallTime;
@@ -278,7 +296,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
                 appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
 
-                appList.setTrustLevel(getSimplifiedTrustLevel(appSource, lastRunTime, lastUpdateTime));
+                // appList.setTrustLevel(getSimplifiedTrustLevel(appSource, lastRunTime, lastUpdateTime));
+
                 res.add(appList);
             }
         }
@@ -313,9 +332,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-    private ArrayList<String> getPermissionsBaseTypes( ArrayList<String> permissions) {
+    private ArrayList<String> getPermissionsBaseTypes(ArrayList<String> permissions) {
 
-        ArrayList <String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
         for (int i = 0; i < permissions.size(); i++) {
             String protectionLevel;
             Log.i(TAG, "getPermissionsBaseTypes: permission - " + permissions.get(i));
@@ -336,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         }
 
-        for (int i = 0; i < result.size(); i++){
+        for (int i = 0; i < result.size(); i++) {
             Log.i(TAG, "getPermissionsBaseTypes: permissionsProtectionLevels - " + result.get(i));
         }
 
@@ -364,12 +383,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
     }
 
-    private String getSimplifiedTrustLevel(String appSource, String lastRunTime, String lastUpdatedTime) {
 
-        if (appSource.equals("Google Play")) {
-            return "high";
-        } else return "middle";
-    }
 
 
     private String currentMilliSecondsToDate(long time) {

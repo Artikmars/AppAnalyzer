@@ -98,4 +98,29 @@
         app:layout_constraintStart_toEndOf="@+id/gp_update_time_label"
         app:layout_constraintTop_toBottomOf="@+id/gp_downloads" />
 
+    <TextView
+        android:id="@+id/gpScore"
+        style="@style/AppDescription"
+        android:layout_width="72dp"
+        android:layout_height="54dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="44dp"
+        android:text="0"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="16dp"
+        android:text="Online Score:"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

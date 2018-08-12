@@ -1,13 +1,68 @@
-package com.artamonov.appanalyzer;
+package com.artamonov.appanalyzer.data.database;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.graphics.drawable.Drawable;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Entity(tableName = "Application")
 public class AppList {
-
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String name;
+    private String packageName;
+    private String version;
+    private String lastUpdateTime;
+    private String lastRunTime;
+    private String firstInstallTime;
+    private String gpRating;
+    private String gpInstalls;
+    private String gpPeople;
+    private String gpUpdated;
+    @Ignore
+    private Drawable icon;
+    private byte[] byteIcon;
+    private boolean isOnline;
+    private String appSource;
+    private String trustLevel;
+ /*   private ArrayList<String> appRequestedPermissions;
+    private ArrayList<String> appGrantedPermissions;
+    private ArrayList<String> requestedPermissionsProtectionLevels;
+    private ArrayList<String> grantedPermissionsProtectionLevels;*/
+
+    @Ignore
+    public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
+                   String gpRating, String gpUpdated) {
+        this.packageName = packageName;
+        this.version = versionName;
+        this.gpInstalls = gpInstalls;
+        this.gpPeople = gpPeople;
+        this.gpRating = gpRating;
+        this.gpUpdated = gpUpdated;
+    }
+
+    public AppList(int id, String packageName, String versionName, String gpInstalls, String gpPeople,
+                   String gpRating, String gpUpdated) {
+        this.id = id;
+        this.packageName = packageName;
+        this.version = versionName;
+        this.gpInstalls = gpInstalls;
+        this.gpPeople = gpPeople;
+        this.gpRating = gpRating;
+        this.gpUpdated = gpUpdated;
+    }
+
+    public AppList() {
+
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getPackageName() {
         return packageName;
@@ -16,18 +71,6 @@ public class AppList {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
-
-    private String packageName;
-    private String version;
-    private String lastUpdateTime;
-    private String lastRunTime;
-    private String firstInstallTime;
-
-
-    private String gpRating;
-    private String gpInstalls;
-    private String gpPeople;
-    private String gpUpdated;
 
     public String getGpRating() {
         return gpRating;
@@ -61,50 +104,6 @@ public class AppList {
         this.gpUpdated = gpUpdated;
     }
 
-    private Drawable icon;
-    private byte[] byteIcon;
-    private boolean isOnline;
-    private String appSource;
-    private String trustLevel;
-    private ArrayList<String> appRequestedPermissions;
-
-    private ArrayList<String> appGrantedPermissions;
-    private ArrayList<String> requestedPermissionsProtectionLevels;
-
-    public ArrayList<String> getRequestedPermissionsProtectionLevels() {
-        return requestedPermissionsProtectionLevels;
-    }
-
-    public void setRequestedPermissionsProtectionLevels(ArrayList<String> requestedPermissionsProtectionLevels) {
-        this.requestedPermissionsProtectionLevels = requestedPermissionsProtectionLevels;
-    }
-
-    public ArrayList<String> getGrantedPermissionsProtectionLevels() {
-        return grantedPermissionsProtectionLevels;
-    }
-
-    public void setGrantedPermissionsProtectionLevels(ArrayList<String> grantedPermissionsProtectionLevels) {
-        this.grantedPermissionsProtectionLevels = grantedPermissionsProtectionLevels;
-    }
-
-    private ArrayList<String> grantedPermissionsProtectionLevels;
-
-    public ArrayList<String> getAppGrantedPermissions() {
-        return appGrantedPermissions;
-    }
-
-    public void setAppGrantedPermissions(ArrayList<String> appGrantedPermissions) {
-        this.appGrantedPermissions = appGrantedPermissions;
-    }
-
-
-    public ArrayList<String> getAppRequestedPermissions() {
-        return appRequestedPermissions;
-    }
-
-    public void setAppRequestedPermissions(ArrayList<String> appRequestedPermissions) {
-        this.appRequestedPermissions = appRequestedPermissions;
-    }
 
     public String getTrustLevel() {
         return trustLevel;
@@ -137,21 +136,6 @@ public class AppList {
     public void setByteIcon(byte[] byteIcon) {
         this.byteIcon = byteIcon;
     }
-    /*public AppList(String name, String version, String lastUpdateTime, String lastRunTime, Drawable icon) {
-        this.name = name;
-        this.version = version;
-        this.lastUpdateTime = lastUpdateTime;
-        this.lastRunTime = lastRunTime;
-        this.icon = icon;
-    }
-
-    public AppList(String appName, String versionName, String lastUpdateTime, String lastRunTime) {
-        this.name = appName;
-        this.version = versionName;
-        this.lastUpdateTime = lastUpdateTime;
-        this.lastRunTime = lastRunTime;
-    }
-*/
 
     public String getFirstInstallTime() {
         return firstInstallTime;

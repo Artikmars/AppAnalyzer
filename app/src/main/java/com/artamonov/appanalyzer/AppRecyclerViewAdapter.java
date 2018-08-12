@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.artamonov.appanalyzer.data.database.AppList;
+
 import java.util.List;
 
 import static com.artamonov.appanalyzer.MainActivity.TAG;
@@ -17,7 +19,7 @@ import static com.artamonov.appanalyzer.MainActivity.TAG;
 public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerViewAdapter.ViewHolder> {
 
     private static ItemClickListener listener;
-    private final List<AppList> appList;
+    private List<AppList> appList;
     private Context context;
 
     public AppRecyclerViewAdapter(Context context, List<AppList> appList, ItemClickListener itemClickListener) {
@@ -43,6 +45,11 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
         holder.appName.setText(applicationList.getName());
         holder.appLogo.setImageDrawable(applicationList.getIcon());
 
+    }
+
+    void setAppList(List<AppList> appList) {
+        this.appList = appList;
+        notifyDataSetChanged();
     }
 
     @Override
