@@ -108,7 +108,7 @@ public class GooglePlayTabFragment extends Fragment {
             parseTask.execute();
         }
 
-        if (!isNetworkAvailable(getActivity()) && appGPApp != null) {
+        if (!isNetworkAvailable(getActivity()) && appGPApp != null && appList.getAppSource().equals("Google Play")) {
             Log.w(MainActivity.TAG, " App exists on DB: " + appGPApp.getGpRating());
             populateViewsFromDB();
         }
