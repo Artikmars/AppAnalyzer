@@ -34,8 +34,10 @@
     <string name="last_run_time">Last Run Time: </string>
     <string name="last_update_time">Last Updated Time: </string>
     <string name="first_install_time">First Install Time: </string>
+
     <string name="requested_app_permissions">Requested Permissions: </string>
     <string name="granted_app_permissions">Granted Permissions: </string>
+    <string name="dangerous_permissions">Dangerous Permissions: </string>
 
     <string name="gp_rating">Rating: </string>
     <string name="gp_people">People: </string>

@@ -28,7 +28,16 @@ public class AppList {
     private boolean isOnline;
     private String appSource;
     private String trustLevel;
- /*   private ArrayList<String> appRequestedPermissions;
+    private String dangerousPermissionsAmount;
+
+    public String getDangerousPermissionsAmount() {
+        return dangerousPermissionsAmount;
+    }
+
+    public void setDangerousPermissionsAmount(String dangerousPermissionsAmount) {
+        this.dangerousPermissionsAmount = dangerousPermissionsAmount;
+    }
+    /*   private ArrayList<String> appRequestedPermissions;
     private ArrayList<String> appGrantedPermissions;
     private ArrayList<String> requestedPermissionsProtectionLevels;
     private ArrayList<String> grantedPermissionsProtectionLevels;*/

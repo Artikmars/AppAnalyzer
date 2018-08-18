@@ -228,11 +228,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     Log.i(TAG, "packageName: " + url);
                     GooglePlayParser.getGPUpdateTime(url, packageName);}
              */
-
                 appList.setAppSource(appSource);
+
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
 //                ArrayList<String> appRequestedPermissionsListArray = new ArrayList<>(Arrays.asList(appRequestedPermissionsArray));
-
+                if (appRequestedPermissionsArray != null) {
+                    Integer dangerousPermissionsAmount = appRequestedPermissionsArray.length;
+                    String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
+                    appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
+                } else {
+                    appList.setDangerousPermissionsAmount("0");
+                }
                 if (appRequestedPermissionsArray != null) {
                    /* StringBuilder buffer = new StringBuilder();
                     for (String each : appRequestedPermissionsArray)
@@ -382,8 +388,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private boolean isSystemPackage(PackageInfo pkgInfo) {
         return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
     }
-
-
 
 
     private String currentMilliSecondsToDate(long time) {
