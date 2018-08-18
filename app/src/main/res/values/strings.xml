@@ -38,6 +38,7 @@
     <string name="requested_app_permissions">Requested Permissions: </string>
     <string name="granted_app_permissions">Granted Permissions: </string>
     <string name="dangerous_permissions">Dangerous Permissions: </string>
+    <string name="permission_groups">Permission Groups: </string>
 
     <string name="gp_rating">Rating: </string>
     <string name="gp_people">People: </string>

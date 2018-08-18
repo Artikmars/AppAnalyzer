@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -233,18 +234,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
 //                ArrayList<String> appRequestedPermissionsListArray = new ArrayList<>(Arrays.asList(appRequestedPermissionsArray));
                 if (appRequestedPermissionsArray != null) {
-                    Integer dangerousPermissionsAmount = appRequestedPermissionsArray.length;
+                    Integer dangerousPermissionsAmount = getDangerousPermissions(appRequestedPermissionsArray).size();
                     String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
                     appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
+
+                    String permissionGroups = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
+                    appList.setPermissionGroups(permissionGroups);
                 } else {
                     appList.setDangerousPermissionsAmount("0");
                 }
                 if (appRequestedPermissionsArray != null) {
                    /* StringBuilder buffer = new StringBuilder();
                     for (String each : appRequestedPermissionsArray)
-                        buffer.append(", ").append(each);
-                    String appRequestedPermissions = buffer.deleteCharAt(0).toString();*/
-                    //appList.setAppRequestedPermissions(appRequestedPermissionsListArray);
+                        buffer.append(", ").append(each);*/
+                    //   String appRequestedPermissions = buffer.deleteCharAt(0).toString();
+                    // appList.setAppRequestedPermissions(appRequestedPermissionsListArray);
                 }
                 // else {appList.setAppRequestedPermissions(null);}
 
@@ -334,39 +338,59 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+      /* PackageManager packageManager = getPackageManager();
+        List<PermissionInfo> permissions = new ArrayList<>();
+        permissions.addAll(packageManager.getPermissionInfo(requestedPermissions, 0));*/
+
         return requestedPermissions;
     }
 
+    private ArrayList<String> getDangerousPermissions(String[] permissionsArray) {
 
-    private ArrayList<String> getPermissionsBaseTypes(ArrayList<String> permissions) {
-
-        ArrayList<String> result = new ArrayList<>();
-        for (int i = 0; i < permissions.size(); i++) {
-            String protectionLevel;
-            Log.i(TAG, "getPermissionsBaseTypes: permission - " + permissions.get(i));
+        ArrayList<String> dangerousPermissionsList = new ArrayList<>();
+        for (int i = 0; i < permissionsArray.length; i++) {
+            Log.w(TAG, "getPermissionsBaseTypes: permission - " + permissionsArray[i]);
             try {
-                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissions.get(i), PackageManager.GET_META_DATA);
+                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissionsArray[i], PackageManager.GET_META_DATA);
                 switch (permissionInfo.protectionLevel) {
-                    case PermissionInfo.PROTECTION_NORMAL:
+                   /* case PermissionInfo.PROTECTION_NORMAL:
                         protectionLevel = "normal";
                         result.add(protectionLevel);
-                        break;
+                        break;*/
                     case PermissionInfo.PROTECTION_DANGEROUS:
-                        protectionLevel = "dangerous";
-                        result.add(protectionLevel);
+                        dangerousPermissionsList.add(permissionsArray[i]);
                         break;
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
-
-        for (int i = 0; i < result.size(); i++) {
-            Log.i(TAG, "getPermissionsBaseTypes: permissionsProtectionLevels - " + result.get(i));
-        }
-
-        return result;
+        return dangerousPermissionsList;
     }
+
+    private String getPermissionGroups(ArrayList<String> dangerousPermissionsList) {
+
+        ArrayList<String> permissionGroups = new ArrayList<>();
+        for (int i = 0; i < dangerousPermissionsList.size(); i++) {
+            Log.w(TAG, "getPermissionGroups: permission - " + dangerousPermissionsList.get(i));
+
+            PermissionGroupInfo permissionGroupInfo = null;
+            try {
+                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(dangerousPermissionsList.get(i), PackageManager.GET_META_DATA);
+                permissionGroupInfo = getPackageManager().getPermissionGroupInfo(permissionInfo.group, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            if (permissionGroupInfo != null) {
+                Log.w(TAG, "getPermissionGroups:group - " + permissionGroupInfo.loadLabel(getPackageManager()));
+                permissionGroups.add((String) permissionGroupInfo.loadLabel(getPackageManager()));
+            }
+        }
+        return TextUtils.join(", ", permissionGroups);
+
+    }
+
 
     private String getAppSource(String appSourceType, PackageInfo p) {
         boolean isSystemApp = isSystemPackage(p);

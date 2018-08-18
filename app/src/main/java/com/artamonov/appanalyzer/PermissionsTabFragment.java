@@ -29,7 +29,9 @@ public class PermissionsTabFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.permissions_tab, container, false);
         TextView tvDangerousPermissions = view.findViewById(R.id.dangerous_permissions);
+        TextView tvPermissionGroups = view.findViewById(R.id.permission_groups);
         tvDangerousPermissions.setText(MainActivity.appList.getDangerousPermissionsAmount());
+        tvPermissionGroups.setText(MainActivity.appList.getPermissionGroups());
         return view;
     }
 }
