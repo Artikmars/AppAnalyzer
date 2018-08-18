@@ -29,8 +29,17 @@ public class AppList {
     private String appSource;
     private String trustLevel;
     private String dangerousPermissionsAmount;
-
     private String permissionGroups;
+
+    private String permissionGroupsAmount;
+
+    public String getPermissionGroupsAmount() {
+        return permissionGroupsAmount;
+    }
+
+    public void setPermissionGroupsAmount(String permissionGroupsAmount) {
+        this.permissionGroupsAmount = permissionGroupsAmount;
+    }
 
     public String getPermissionGroups() {
         return permissionGroups;

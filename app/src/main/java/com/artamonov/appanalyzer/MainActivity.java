@@ -35,8 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
@@ -52,12 +54,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static AppList appList;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
-    String lastRunTime;
     String appNameString, versionString;
-    private ArrayList<String> requestedPermissionsProtectionLevels;
-    private ArrayList<String> grantedPermissionsProtectionLevels;
 
-    private AppDetailViewModel appDetailViewModel;
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -238,32 +236,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
                     appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
 
-                    String permissionGroups = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
-                    appList.setPermissionGroups(permissionGroups);
+                    ArrayList<String> permissionGroupsList = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
+                    String permissionGroupsString = TextUtils.join("\n", permissionGroupsList);
+                    appList.setPermissionGroups(permissionGroupsString);
+
+                    String permissionGroupAmount = Integer.toString(permissionGroupsList.size());
+                    appList.setPermissionGroupsAmount(permissionGroupAmount);
                 } else {
                     appList.setDangerousPermissionsAmount("0");
                 }
-                if (appRequestedPermissionsArray != null) {
-                   /* StringBuilder buffer = new StringBuilder();
-                    for (String each : appRequestedPermissionsArray)
-                        buffer.append(", ").append(each);*/
-                    //   String appRequestedPermissions = buffer.deleteCharAt(0).toString();
-                    // appList.setAppRequestedPermissions(appRequestedPermissionsListArray);
-                }
-                // else {appList.setAppRequestedPermissions(null);}
-
-                // ArrayList<String> appGrantedPermissionsArray = new ArrayList<>(getGrantedPermissions(packageName));
-
-               /* String grantedPermissions = null;
-                for (int k = 0; i < appGrantedPermissionsArray.size(); i++) {
-                    grantedPermissions = grantedPermissions + appGrantedPermissionsArray.get(k) + ", ";
-                }*/
-                //requestedPermissionsProtectionLevels = getPermissionsBaseTypes(appRequestedPermissionsListArray);
-                // grantedPermissionsProtectionLevels = getPermissionsBaseTypes(appGrantedPermissionsArray);
-                // appList.setRequestedPermissionsProtectionLevels(requestedPermissionsProtectionLevels);
-                // appList.setGrantedPermissionsProtectionLevels(grantedPermissionsProtectionLevels);
-                //    appList.setAppGrantedPermissions(appGrantedPermissionsArray);
-
 
                 long firstInstallTimeLong = p.firstInstallTime;
                 String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
@@ -271,16 +252,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 // String firstInstallTime = String.valueOf(p.firstInstallTime);
                 Log.i(TAG, "firstInstallTime" + firstInstallTime);
                 appList.setFirstInstallTime(firstInstallTime);
-
-                   /* switch (appSourceType) {
-                        case "com.android.vending":
-                            appList.setAppSource("Google Play");
-                        case "com.amazon.venezia":
-                            appList.setAppSource("Amazon Store");*/
-                //case "com.sec.android.app.samsungapps":
-                //  appList.setAppSource("Samsung Store");
-                //    }
-                //  }
 
                 /* The Last Run Time can be extracted only from UsageStats
                  * Through the following loop we try to find the package name extracted from
@@ -305,9 +276,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     }
                 }
                 appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
-
-                // appList.setTrustLevel(getSimplifiedTrustLevel(appSource, lastRunTime, lastUpdateTime));
-
                 res.add(appList);
             }
         }
@@ -315,20 +283,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-    List<String> getGrantedPermissions(final String appPackage) {
-        List<String> grantedPermissions = new ArrayList<>();
-        try {
-            PackageInfo pi = getPackageManager().getPackageInfo(appPackage, PackageManager.GET_PERMISSIONS);
-
-            for (int i = 0; i < pi.requestedPermissions.length; i++) {
-                if ((pi.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0) {
-                    grantedPermissions.add(pi.requestedPermissions[i]);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return grantedPermissions;
-    }
 
     private String[] getRequestedPermissions(final String appPackage) {
         String[] requestedPermissions = null;
@@ -338,11 +292,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-      /* PackageManager packageManager = getPackageManager();
-        List<PermissionInfo> permissions = new ArrayList<>();
-        permissions.addAll(packageManager.getPermissionInfo(requestedPermissions, 0));*/
-
         return requestedPermissions;
     }
 
@@ -354,10 +303,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             try {
                 PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissionsArray[i], PackageManager.GET_META_DATA);
                 switch (permissionInfo.protectionLevel) {
-                   /* case PermissionInfo.PROTECTION_NORMAL:
-                        protectionLevel = "normal";
-                        result.add(protectionLevel);
-                        break;*/
                     case PermissionInfo.PROTECTION_DANGEROUS:
                         dangerousPermissionsList.add(permissionsArray[i]);
                         break;
@@ -369,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         return dangerousPermissionsList;
     }
 
-    private String getPermissionGroups(ArrayList<String> dangerousPermissionsList) {
+    private ArrayList<String> getPermissionGroups(ArrayList<String> dangerousPermissionsList) {
 
         ArrayList<String> permissionGroups = new ArrayList<>();
         for (int i = 0; i < dangerousPermissionsList.size(); i++) {
@@ -387,7 +332,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 permissionGroups.add((String) permissionGroupInfo.loadLabel(getPackageManager()));
             }
         }
-        return TextUtils.join(", ", permissionGroups);
+        Set<String> tempSet = new HashSet<>(permissionGroups);
+        permissionGroups.clear();
+        permissionGroups.addAll(tempSet);
+
+        return permissionGroups;
 
     }
 
@@ -437,23 +386,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         intent.putExtra("position", position);
         intent.putExtra("logo", drawableToByte(appList.getIcon()));
         startActivity(intent);
-  /*
-        ArrayList<String> appRequestedPermissions = appList.getAppRequestedPermissions();
-        ArrayList<String> appGrantedPermissions = appList.getAppGrantedPermissions();
-        ArrayList<String> requestedPermissionsProtectionLevel = appList.getRequestedPermissionsProtectionLevels();
-        ArrayList<String> grantedPermissionsProtectionLevel = appList.getGrantedPermissionsProtectionLevels();*/
-
-
-      /*  intent.putStringArrayListExtra("requested permissions", appRequestedPermissions);
-        intent.putStringArrayListExtra("granted permissions", appGrantedPermissions);
-        intent.putStringArrayListExtra("requested permissions protection levels", requestedPermissionsProtectionLevel);
-        intent.putStringArrayListExtra("granted permissions protection levels", grantedPermissionsProtectionLevel);
-        startActivity(intent);*/
-
-        //  Bundle bundle = new Bundle();
-        //  bundle.putSerializable("requested permissions", (Serializable) appRequestedPermissions);
-        // bundle.putSerializable("granted permissions", (Serializable) appGrantedPermissions);
-        // intent.putExtras(bundle);
-        //String popularityScore =
     }
 }

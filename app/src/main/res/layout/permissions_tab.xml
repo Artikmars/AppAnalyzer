@@ -15,58 +15,6 @@
 
 
         <TextView
-            android:id="@+id/requested_app_permissions_label"
-            style="@style/AppDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/requested_app_permissions"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/permission_groups" />
-
-        <TextView
-            android:id="@+id/requested_app_permissions"
-            style="@style/AppDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/undefined"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/requested_app_permissions_label" />
-
-
-        <TextView
-            android:id="@+id/granted_app_permissions_label"
-            style="@style/AppDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="26dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="84dp"
-            android:text="@string/granted_app_permissions"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/requested_app_permissions" />
-
-        <TextView
-            android:id="@+id/granted_app_permissions"
-            style="@style/AppDescription"
-            android:layout_width="0dp"
-            android:layout_height="76dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/granted_app_permissions_label" />
-
-        <TextView
             android:id="@+id/dangerous_permissions_label"
             style="@style/AppDescription"
             android:layout_width="wrap_content"
@@ -114,6 +62,20 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/permission_groups_label" />
+
+        <TextView
+            android:id="@+id/permission_groups_amount"
+            style="@style/AppDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/undefined"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/permission_groups_label"
+            app:layout_constraintTop_toBottomOf="@+id/dangerous_permissions"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </android.support.constraint.ConstraintLayout>
