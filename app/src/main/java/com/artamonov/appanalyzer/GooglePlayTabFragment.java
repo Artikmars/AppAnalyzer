@@ -22,7 +22,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -277,11 +276,9 @@ public class GooglePlayTabFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             Log.w(MainActivity.TAG, "onPostExecute ");
-            try {
-                populateViews();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+
+            populateViews();
+
             Log.w(MainActivity.TAG, "onPostExecute: parsedAppList: " + parsedAppList.getGpPeople());
             appDetailFragmentViewModel.insert(parsedAppList);
 

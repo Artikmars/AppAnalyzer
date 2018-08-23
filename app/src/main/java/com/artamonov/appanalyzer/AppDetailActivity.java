@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,7 @@ public class AppDetailActivity extends AppCompatActivity {
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    private AdView mAdView;
 
    /* private ArrayList<String> appRequestedPermissions;
     private ArrayList<String> appGrantedPermissions;
@@ -255,6 +259,12 @@ public class AppDetailActivity extends AppCompatActivity {
             }
         });
 
+
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
 
         /*appRequestedPermissions = intent.getStringArrayListExtra("requested permissions");
