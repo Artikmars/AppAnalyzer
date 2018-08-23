@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
@@ -27,6 +28,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.artamonov.appanalyzer.data.database.AppList;
 
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
     String appNameString, versionString;
-
+    private ProgressBar progressBar;
+    private Handler handler = new Handler();
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -69,6 +72,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //  progressBar = findViewById(R.id.progressBar);
+
+     /*   ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Downloading the App List ...");
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(true);
+        progress.setMax(100);
+        progress.show();*/
+
+
+
         RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
         final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
@@ -186,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
          *
          */
         Log.i(TAG, "in getInstalledApps");
+
         List<AppList> res = new ArrayList<>();
         // public static List<AppList> serverList = new ArrayList<>();
         List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
@@ -207,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // startActivity(intent);
 
         for (int i = 0; i < packs.size(); i++) {
+            int progress = 100 / (packs.size());
+            //  progressBar.setProgress(progress + 100/packs.size());
+
             PackageInfo p = packs.get(i);
             if ((!isSystemPackage(p))) {
 
@@ -217,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 long lastUpdatedTimeLong = p.lastUpdateTime;
                 String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
                 appList.setLastUpdateTime(lastUpdateTime);
+                appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
                 String packageName = p.packageName;
                 Log.i(TAG, "packageName: " + packageName);
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
@@ -269,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         lastTimeExecuted = mListUsageStats.get(k).getLastTimeUsed();
                         String lastRunTime = currentMilliSecondsToDate(lastTimeExecuted);
                         appList.setLastRunTime(lastRunTime);
+                        appList.setLastRunTimeInMilliseconds(lastTimeExecuted);
                         break;
                     } else {
                         lastTimeExecuted = 0;
@@ -299,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ArrayList<String> dangerousPermissionsList = new ArrayList<>();
         for (int i = 0; i < permissionsArray.length; i++) {
-            Log.w(TAG, "getPermissionsBaseTypes: permission - " + permissionsArray[i]);
+            // Log.w(TAG, "getPermissionsBaseTypes: permission - " + permissionsArray[i]);
             try {
                 PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissionsArray[i], PackageManager.GET_META_DATA);
                 switch (permissionInfo.protectionLevel) {
@@ -318,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ArrayList<String> permissionGroups = new ArrayList<>();
         for (int i = 0; i < dangerousPermissionsList.size(); i++) {
-            Log.w(TAG, "getPermissionGroups: permission - " + dangerousPermissionsList.get(i));
+            //Log.w(TAG, "getPermissionGroups: permission - " + dangerousPermissionsList.get(i));
 
             PermissionGroupInfo permissionGroupInfo = null;
             try {
@@ -328,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 e.printStackTrace();
             }
             if (permissionGroupInfo != null) {
-                Log.w(TAG, "getPermissionGroups:group - " + permissionGroupInfo.loadLabel(getPackageManager()));
+                // Log.w(TAG, "getPermissionGroups:group - " + permissionGroupInfo.loadLabel(getPackageManager()));
                 permissionGroups.add((String) permissionGroupInfo.loadLabel(getPackageManager()));
             }
         }

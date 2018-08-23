@@ -16,14 +16,42 @@ public class AppList {
     private String packageName;
     private String version;
     private String lastUpdateTime;
+    private long lastUpdateTimeInMilliseconds;
     private String lastRunTime;
+    private long lastRunTimeInMilliseconds;
     private String firstInstallTime;
     private String gpRating;
     private String gpInstalls;
     private String gpPeople;
     private String gpUpdated;
+    private String gpUpdatedInMilliseconds;
     @Ignore
     private Drawable icon;
+
+    public long getLastUpdateTimeInMilliseconds() {
+        return lastUpdateTimeInMilliseconds;
+    }
+
+    public void setLastUpdateTimeInMilliseconds(long lastUpdateTimeInMilliseconds) {
+        this.lastUpdateTimeInMilliseconds = lastUpdateTimeInMilliseconds;
+    }
+
+    public long getLastRunTimeInMilliseconds() {
+        return lastRunTimeInMilliseconds;
+    }
+
+    public void setLastRunTimeInMilliseconds(long lastRunTimeInMilliseconds) {
+        this.lastRunTimeInMilliseconds = lastRunTimeInMilliseconds;
+    }
+
+    public String getGpUpdatedInMilliseconds() {
+        return gpUpdatedInMilliseconds;
+    }
+
+    public void setGpUpdatedInMilliseconds(String gpUpdatedInMilliseconds) {
+        this.gpUpdatedInMilliseconds = gpUpdatedInMilliseconds;
+    }
+
     private byte[] byteIcon;
     private boolean isOnline;
     private String appSource;

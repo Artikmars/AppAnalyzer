@@ -170,7 +170,7 @@ public class GooglePlayTabFragment extends Fragment {
         return view;
     }
 
-    public void populateViews() throws ParseException {
+    public void populateViews() {
         if (parsedAppList != null) {
 
             Log.w(MainActivity.TAG, " in populateViews: " + parsedAppList.getGpRating());
@@ -178,9 +178,18 @@ public class GooglePlayTabFragment extends Fragment {
             tvInstalls.setText(parsedAppList.getGpInstalls());
             tvPeople.setText(parsedAppList.getGpPeople());
             tvUpdated.setText(parsedAppList.getGpUpdated());
-        tvScore.setText(AppDetailActivity.getSimplifiedTrustLevel(appList.getAppSource(),
+       /* tvScore.setText(AppDetailActivity.getSimplifiedTrustLevel(appList.getAppSource(),
                 parsedAppList.getGpInstalls(),
-                parsedAppList.getGpPeople(), parsedAppList.getGpRating()));
+                parsedAppList.getGpPeople(), parsedAppList.getGpRating()));*/
+            double overallTrust = AppDetailActivity.getOverallTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
+                    MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
+                    parsedAppList.getGpInstalls(), parsedAppList.getGpPeople(), parsedAppList.getGpRating(),
+                    parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
+            Log.w(MainActivity.TAG, " in populateViews: overallTrust: " + overallTrust);
+            String overTrust = String.valueOf(overallTrust);
+            tvScore.setText(overTrust);
+
+
         } else {
             Log.w(MainActivity.TAG, " in populateViews: list is empty ");
         }
@@ -275,6 +284,11 @@ public class GooglePlayTabFragment extends Fragment {
             }
             Log.w(MainActivity.TAG, "onPostExecute: parsedAppList: " + parsedAppList.getGpPeople());
             appDetailFragmentViewModel.insert(parsedAppList);
+
+
+
+
+
           /* if (AppDetailActivity.appGPApp != null) {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
