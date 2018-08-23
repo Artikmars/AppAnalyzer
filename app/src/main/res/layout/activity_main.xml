@@ -2,14 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
     tools:context="com.artamonov.appanalyzer.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/app_list"
+        android:descendantFocusability="afterDescendants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:focusable="true"
         android:scrollbars="none" />
 
     <!--  <ProgressBar
