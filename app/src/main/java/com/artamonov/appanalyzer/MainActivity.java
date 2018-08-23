@@ -2,6 +2,8 @@ package com.artamonov.appanalyzer;
 
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,9 +37,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -56,12 +61,132 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static List<AppList> installedApps = new ArrayList<>();
     public static String installedAppsString;
     public static AppList appList;
+    public static List<AppList> applicationsWidgetListUnsorted;
+    public static List<AppList> applicationsWidgetListSorted;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
     String appNameString, versionString;
     private ProgressBar progressBar;
     private Handler handler = new Handler();
     private String permissionGroupAmount;
+    private long lastUpdatedTimeLong;
+    private String appSource;
+
+    public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
+                                              String permissionsAmount) {
+
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTime: " + updatedTime);
+        double daysAfterLastUpdate = dateDiff(updatedTime);
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastUpdate: " + daysAfterLastUpdate);
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTime: " + runTime);
+        double daysAfterLastRun = dateDiff(runTime);
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastRun: " + daysAfterLastRun);
+        double permissionsAmountDouble;
+        if (permissionsAmount != null) {
+            permissionsAmountDouble = Double.valueOf(permissionsAmount);
+        } else {
+            permissionsAmountDouble = 30;
+        }
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsAmountDouble: " + permissionsAmountDouble);
+
+
+        double updatedTrust = mainTrustFormula(14, 7, daysAfterLastUpdate);
+        double permissionsTrust = mainTrustFormula(7, 3, permissionsAmountDouble);
+
+        int sourceTrust = getSourceTrust(appSource);
+
+        double runTimeTrust = daysAfterLastRun / (2.0 * 14.0);
+        if (runTimeTrust > 1) {
+            runTimeTrust = 1;
+        }
+
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTrust: ");
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTimeTrust: " + runTimeTrust);
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: sourceTrust: " + sourceTrust);
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsTrust: " + permissionsTrust);
+
+        double offlineTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.3 * sourceTrust + 0.4 * permissionsTrust) * 100;
+        Log.i(MainActivity.TAG, "getOfflineTrustLevel: offlineTrust: " + offlineTrust);
+        return (double) Math.round(offlineTrust * 100) / 100;
+        // return Double.parseDouble(offlineTrustString);
+
+
+      /*  if (TextUtils.isEmpty(gpInstalls) || TextUtils.isEmpty(gpPeople) ||
+                TextUtils.isEmpty(gpRating)) {
+            return String.valueOf(sourceScore * 60);
+        }*/
+
+       /* if (gpInstalls.length() > 0 && gpInstalls.charAt(gpInstalls.length() - 1) == '+') {
+            gpInstalls = gpInstalls.substring(0, gpInstalls.length() - 1);
+        }*/
+
+/*
+        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+        Number n = format.parse(gpRating);
+        double rating = n.doubleValue();*/
+
+        //double downloads = number.doubleValue();
+
+
+    }
+
+    static int dateDiffGp(String gpPublished) {
+        if (gpPublished == null) {
+            return 0;
+        }
+        String[] gpPublishedArray = gpPublished.split(" ", 3);
+
+        String month = gpPublishedArray[0];
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("MMMM", Locale.GERMAN).parse(month);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+
+            int day = Integer.parseInt(gpPublishedArray[1].substring(0, gpPublishedArray[1].length() - 1));
+            int year = Integer.parseInt(gpPublishedArray[2]);
+            Calendar thatDay = Calendar.getInstance();
+            thatDay.set(Calendar.DAY_OF_MONTH, day);
+            thatDay.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+            thatDay.set(Calendar.YEAR, year);
+
+            Calendar today = Calendar.getInstance();
+
+            return (int) ((today.getTimeInMillis() - thatDay.getTimeInMillis()) / (60 * 60 * 24 * 1000));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+    }
+
+    static int getSourceTrust(String appSource) {
+        if (appSource.equals("Google Play")) {
+            return 1;
+        } else return 0;
+    }
+
+    static double dateDiff(long timestamp) {
+        //timestamp - 23.08.2018 at 02:45:48
+        if (timestamp == 0) {
+            return 0;
+        }
+        Calendar today = Calendar.getInstance();
+        int days = (int) ((today.getTimeInMillis() - timestamp) / (60 * 60 * 24 * 1000));
+        return (double) days;
+    }
+
+    static double mainTrustFormula(double day1, double day2, double z) {
+        Log.i(MainActivity.TAG, "mainTrustFormula: day1: " + day1);
+        Log.i(MainActivity.TAG, "mainTrustFormula: day2: " + day2);
+        Log.i(MainActivity.TAG, "mainTrustFormula: daysAfterLastUpdate: " + z);
+        double rest = 0.05;
+        double exp = Math.log(2.0) / Math.log(1.0 + (day2 / day1));
+        Log.i(MainActivity.TAG, "mainTrustFormula: exp: " + exp);
+        double exp2 = Math.pow((z / day1), exp);
+        Log.i(MainActivity.TAG, "mainTrustFormula: exp2: " + exp2);
+        return (1.0 - rest) * Math.pow(0.5, exp2) + rest;
+    }
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -104,8 +229,35 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setupSharedPreferences();
         checkFirstRun();
 
+        applicationsWidgetListUnsorted = installedApps;
+        Collections.sort(applicationsWidgetListUnsorted, new Comparator<AppList>() {
+            @Override
+            public int compare(AppList appList1, AppList appList2) {
+                return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
+            }
+        });
+
+
+        //  createApplicationsWidgetList();
 
     }
+
+   /* private void createApplicationsWidgetList() {
+        applicationsWidgetListUnsorted = null;
+        for (int i = 0; i < installedApps.size(); i++) {
+            AppList appList = null;
+            appList.setPackageName(installedApps.get(i).getName());
+            appList.setOfflineTrust(installedApps.get(i).getOfflineTrust());
+            applicationsWidgetListUnsorted.add(appList);
+
+        }
+        Collections.sort(applicationsWidgetListUnsorted);
+        applicationsWidgetListSorted = null;
+        for (int i = 0; i < 5; i++) {
+            applicationsWidgetListSorted.add(applicationsWidgetListUnsorted.get(i));
+        }
+    }*/
+
 
     @Override
     protected void onDestroy() {
@@ -234,14 +386,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 appList.setPackageName(p.packageName);
                 appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
                 appList.setVersion(p.versionName);
-                long lastUpdatedTimeLong = p.lastUpdateTime;
+                lastUpdatedTimeLong = p.lastUpdateTime;
                 String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
                 appList.setLastUpdateTime(lastUpdateTime);
                 appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
                 String packageName = p.packageName;
                 Log.i(TAG, "packageName: " + packageName);
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
-                String appSource = getAppSource(appSourceType, p);
+                appSource = getAppSource(appSourceType, p);
 
               /*  if (appSource.equals("Google Play")){
                     String url = "https://play.google.com/store/apps/details?id=" + packageName + "&hl=en";
@@ -307,13 +459,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         appList.setLastRunTime("NO available data");
                     }
                 }
+
+                appList.setOfflineTrust(getOfflineTrustLevel(lastUpdatedTimeLong, lastTimeExecuted,
+                        appSource, permissionGroupAmount));
                 appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
                 res.add(appList);
             }
         }
         return res;
     }
-
 
     private String[] getRequestedPermissions(final String appPackage) {
         String[] requestedPermissions = null;
@@ -408,6 +562,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void loadSourceFromPreferences(SharedPreferences sharedPreferences) {
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                new ComponentName(getApplicationContext(), ApplicationsWidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lvAppWidget);
     }
 
     @Override

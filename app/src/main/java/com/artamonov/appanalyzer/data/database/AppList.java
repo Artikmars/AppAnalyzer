@@ -55,7 +55,24 @@ public class AppList {
     private byte[] byteIcon;
     private boolean isOnline;
     private String appSource;
-    private String trustLevel;
+    private double offlineTrust;
+    private String overallTrust;
+
+    public double getOfflineTrust() {
+        return offlineTrust;
+    }
+
+    public void setOfflineTrust(double offlineTrust) {
+        this.offlineTrust = offlineTrust;
+    }
+
+    public String getOverallTrust() {
+        return overallTrust;
+    }
+
+    public void setOverallTrust(String overallTrust) {
+        this.overallTrust = overallTrust;
+    }
     private String dangerousPermissionsAmount;
     private String permissionGroups;
 
@@ -161,15 +178,6 @@ public class AppList {
 
     public void setGpUpdated(String gpUpdated) {
         this.gpUpdated = gpUpdated;
-    }
-
-
-    public String getTrustLevel() {
-        return trustLevel;
-    }
-
-    public void setTrustLevel(String trustLevel) {
-        this.trustLevel = trustLevel;
     }
 
     public boolean isOnline() {

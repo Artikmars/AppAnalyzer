@@ -35,6 +35,21 @@
         <activity android:name=".AppDetailActivity"
             android:launchMode="singleTop">
         </activity>
+
+        <service
+            android:name=".ApplicationsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+        <receiver android:name=".ApplicationsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/applications_widget_provider_info" />
+        </receiver>
+
+
     </application>
 
 </manifest>

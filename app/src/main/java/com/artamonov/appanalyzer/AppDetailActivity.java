@@ -18,14 +18,13 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.artamonov.appanalyzer.MainActivity.dateDiff;
+import static com.artamonov.appanalyzer.MainActivity.dateDiffGp;
+import static com.artamonov.appanalyzer.MainActivity.getSourceTrust;
+import static com.artamonov.appanalyzer.MainActivity.mainTrustFormula;
 
 
 public class AppDetailActivity extends AppCompatActivity {
@@ -54,59 +53,6 @@ public class AppDetailActivity extends AppCompatActivity {
     private TextView tvAppRequestedPermissionsLabel;
     private TextView tvAppGrantedPermissionsLabel;*/
 
-    public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
-                                              String permissionsAmount) {
-
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTime: " + updatedTime);
-        double daysAfterLastUpdate = dateDiff(updatedTime);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastUpdate: " + daysAfterLastUpdate);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTime: " + runTime);
-        double daysAfterLastRun = dateDiff(runTime);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastRun: " + daysAfterLastRun);
-
-        double permissionsAmountDouble = Double.valueOf(permissionsAmount);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsAmountDouble: " + permissionsAmountDouble);
-
-
-        double updatedTrust = mainTrustFormula(14, 7, daysAfterLastUpdate);
-        double permissionsTrust = mainTrustFormula(7, 3, permissionsAmountDouble);
-
-        int sourceTrust = getSourceTrust(appSource);
-
-        double runTimeTrust = daysAfterLastRun / (2.0 * 14.0);
-        if (runTimeTrust > 1) {
-            runTimeTrust = 1;
-        }
-
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTrust: ");
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTimeTrust: " + runTimeTrust);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: sourceTrust: " + sourceTrust);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsTrust: " + permissionsTrust);
-
-        double offlineTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.3 * sourceTrust + 0.4 * permissionsTrust) * 100;
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: offlineTrust: " + offlineTrust);
-        return (double) Math.round(offlineTrust * 100) / 100;
-        // return Double.parseDouble(offlineTrustString);
-
-
-      /*  if (TextUtils.isEmpty(gpInstalls) || TextUtils.isEmpty(gpPeople) ||
-                TextUtils.isEmpty(gpRating)) {
-            return String.valueOf(sourceScore * 60);
-        }*/
-
-       /* if (gpInstalls.length() > 0 && gpInstalls.charAt(gpInstalls.length() - 1) == '+') {
-            gpInstalls = gpInstalls.substring(0, gpInstalls.length() - 1);
-        }*/
-
-/*
-        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-        Number n = format.parse(gpRating);
-        double rating = n.doubleValue();*/
-
-        //double downloads = number.doubleValue();
-
-
-    }
 
     public static double getOverallTrustLevel(long updatedTime, long runTime, String appSource, String gpInstalls, String gpPeople,
                                               String gpRating, String gpPublished, String permissionsAmount) {
@@ -164,63 +110,6 @@ public class AppDetailActivity extends AppCompatActivity {
 
     }
 
-    private static int dateDiffGp(String gpPublished) {
-        if (gpPublished == null) {
-            return 0;
-        }
-        String[] gpPublishedArray = gpPublished.split(" ", 3);
-
-        String month = gpPublishedArray[0];
-        Date date = null;
-        try {
-            date = new SimpleDateFormat("MMMM", Locale.GERMAN).parse(month);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-
-            int day = Integer.parseInt(gpPublishedArray[1].substring(0, gpPublishedArray[1].length() - 1));
-            int year = Integer.parseInt(gpPublishedArray[2]);
-            Calendar thatDay = Calendar.getInstance();
-            thatDay.set(Calendar.DAY_OF_MONTH, day);
-            thatDay.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-            thatDay.set(Calendar.YEAR, year);
-
-            Calendar today = Calendar.getInstance();
-
-            return (int) ((today.getTimeInMillis() - thatDay.getTimeInMillis()) / (60 * 60 * 24 * 1000));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return 0;
-        }
-
-    }
-
-    private static int getSourceTrust(String appSource) {
-        if (appSource.equals("Google Play")) {
-            return 1;
-        } else return 0;
-    }
-
-    private static double dateDiff(long timestamp) {
-        //timestamp - 23.08.2018 at 02:45:48
-        if (timestamp == 0) {
-            return 0;
-        }
-        Calendar today = Calendar.getInstance();
-        int days = (int) ((today.getTimeInMillis() - timestamp) / (60 * 60 * 24 * 1000));
-        return (double) days;
-    }
-
-    private static double mainTrustFormula(double day1, double day2, double z) {
-        Log.i(MainActivity.TAG, "mainTrustFormula: day1: " + day1);
-        Log.i(MainActivity.TAG, "mainTrustFormula: day2: " + day2);
-        Log.i(MainActivity.TAG, "mainTrustFormula: daysAfterLastUpdate: " + z);
-        double rest = 0.05;
-        double exp = Math.log(2.0) / Math.log(1.0 + (day2 / day1));
-        Log.i(MainActivity.TAG, "mainTrustFormula: exp: " + exp);
-        double exp2 = Math.pow((z / day1), exp);
-        Log.i(MainActivity.TAG, "mainTrustFormula: exp2: " + exp2);
-        return (1.0 - rest) * Math.pow(0.5, exp2) + rest;
-    }
 
 
     @Override
@@ -300,8 +189,7 @@ public class AppDetailActivity extends AppCompatActivity {
         //  tvLastUpdatedTime.setText(appLastUpdatedTime);
         ivLogo.setImageBitmap(appLogo);
         //    tvAppSource.setText(appSource);
-        tvTrustLevel = findViewById(R.id.trust_level);
-        tvTrustLevel.setText(MainActivity.appList.getTrustLevel());
+
 
         tabLayout.setupWithViewPager(viewPager);
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
@@ -310,10 +198,14 @@ public class AppDetailActivity extends AppCompatActivity {
         adapter.setPageTitles(getResources().getString(R.string.third_tab));
         viewPager.setAdapter(adapter);
 
-        String offlineTrust = String.valueOf(getOfflineTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
+       /* String offlineTrust = String.valueOf(getOfflineTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
                 MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
-                MainActivity.appList.getDangerousPermissionsAmount()));
-        tvTrustLevel.setText(offlineTrust);
+                MainActivity.appList.getDangerousPermissionsAmount()));*/
+        // tvTrustLevel.setText(offlineTrust);
+        tvTrustLevel = findViewById(R.id.trust_level);
+        double offlineTrust = MainActivity.appList.getOfflineTrust();
+        String offlineTrustString = String.valueOf(offlineTrust);
+        tvTrustLevel.setText(offlineTrustString);
 
 
     }
