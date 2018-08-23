@@ -31,6 +31,8 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     String appNameString, versionString;
     private ProgressBar progressBar;
     private Handler handler = new Handler();
+    private String permissionGroupAmount;
 
     public byte[] drawableToByte(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -80,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         progress.setIndeterminate(true);
         progress.setMax(100);
         progress.show();*/
-
 
 
         RecyclerView recyclerView = findViewById(R.id.app_list);
@@ -259,11 +261,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     String permissionGroupsString = TextUtils.join("\n", permissionGroupsList);
                     appList.setPermissionGroups(permissionGroupsString);
 
-                    String permissionGroupAmount = Integer.toString(permissionGroupsList.size());
+                    permissionGroupAmount = Integer.toString(permissionGroupsList.size());
                     appList.setPermissionGroupsAmount(permissionGroupAmount);
                 } else {
                     appList.setDangerousPermissionsAmount("0");
                 }
+
+                //Connect to the Firebase Realtime Database
+                DatabaseReference permissionsReference = FirebaseDatabase
+                        .getInstance()
+                        .getReference("permission_group_amount");
+                String id = permissionsReference.push().getKey();
+                if (id != null) {
+                    permissionsReference.child(id).setValue(permissionGroupAmount);
+                }
+
 
                 long firstInstallTimeLong = p.firstInstallTime;
                 String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
@@ -301,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         return res;
     }
-
 
 
     private String[] getRequestedPermissions(final String appPackage) {
