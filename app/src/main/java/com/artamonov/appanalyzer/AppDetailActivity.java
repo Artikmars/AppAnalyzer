@@ -44,16 +44,6 @@ public class AppDetailActivity extends AppCompatActivity {
     ViewPager viewPager;
     private AdView mAdView;
 
-   /* private ArrayList<String> appRequestedPermissions;
-    private ArrayList<String> appGrantedPermissions;
-    private ArrayList<String> requestedPermissionsProtectionLevel;
-    private ArrayList<String> grantedPermissionsProtectionLevel;
-    private TextView tvAppGrantedPermissions;
-    private TextView tvAppRequestedPermissions;
-    private TextView tvAppRequestedPermissionsLabel;
-    private TextView tvAppGrantedPermissionsLabel;*/
-
-
     public static double getOverallTrustLevel(long updatedTime, long runTime, String appSource, String gpInstalls, String gpPeople,
                                               String gpRating, String gpPublished, String permissionsAmount) {
 
@@ -118,18 +108,6 @@ public class AppDetailActivity extends AppCompatActivity {
         setContentView(R.layout.detail_app_analyzer);
         ButterKnife.bind(this);
 
-     /*   appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
-        appDetailViewModel.getAllApps().observe(this, new Observer<List<AppList>>() {
-            @Override
-            public void onChanged(@Nullable final List<AppList> logList) {
-                // Update the cached copy of the applications in the adapter.
-                for (int i = 0; i < logList.size(); i++) {
-                    Log.w(MainActivity.TAG, "   LiveData<List<AppList>> from DB:  " + logList.get(i).getGpPeople());
-                }
-            }
-        });*/
-
-        //WORKABLE
 
         appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
         appDetailViewModel.getGpData(MainActivity.appList.getPackageName()).observe(this, new Observer<AppList>() {
@@ -155,41 +133,14 @@ public class AppDetailActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
-
-        /*appRequestedPermissions = intent.getStringArrayListExtra("requested permissions");
-        appGrantedPermissions = intent.getStringArrayListExtra("granted permissions");
-        requestedPermissionsProtectionLevel = intent.getStringArrayListExtra("requested permissions protection levels");
-        grantedPermissionsProtectionLevel = intent.getStringArrayListExtra("granted permissions protection levels");*/
-
-
-        // appRequestedPermissions = intent.getStringExtra("requested permissions");
-        // appGrantedPermissions = intent.getStringExtra("granted permissions");
-        //  Log.i(MainActivity.TAG, "AppDetailActivity: appSource: " + appSource);
-        //  Log.i(MainActivity.TAG, "AppDetailActivity: appFirstInstallTime: " + appFirstInstallTime);
         Bundle extras = getIntent().getExtras();
         byte[] byteLogo = extras.getByteArray("logo");
         Bitmap appLogo = BitmapFactory.decodeByteArray(byteLogo, 0, byteLogo.length);
 
-
-        // tvAppRequestedPermissions = findViewById(R.id.requested_app_permissions);
-        // tvAppRequestedPermissions.setText(appRequestedPermissions);
-
-    /*    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvAppGrantedPermissions = findViewById(R.id.granted_app_permissions);
-            tvAppGrantedPermissionsLabel = findViewById(R.id.granted_app_permissions_label);
-            tvAppGrantedPermissionsLabel.setText(getResources().getString(R.string.granted_app_permissions));
-            //  tvAppGrantedPermissions.setText(appGrantedPermissions);
-        }*/
-
         ImageView ivLogo = findViewById(R.id.detailed_app_icon);
         tvAppName.setText(MainActivity.appList.getName());
         tvAppVersion.setText(MainActivity.appList.getVersion());
-        //  tvFirstInstallTime.setText(appFirstInstallTime);
-        // tvLastRunTime.setText(appLastRunTime);
-        //  tvLastUpdatedTime.setText(appLastUpdatedTime);
         ivLogo.setImageBitmap(appLogo);
-        //    tvAppSource.setText(appSource);
-
 
         tabLayout.setupWithViewPager(viewPager);
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
@@ -198,10 +149,6 @@ public class AppDetailActivity extends AppCompatActivity {
         adapter.setPageTitles(getResources().getString(R.string.third_tab));
         viewPager.setAdapter(adapter);
 
-       /* String offlineTrust = String.valueOf(getOfflineTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
-                MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
-                MainActivity.appList.getDangerousPermissionsAmount()));*/
-        // tvTrustLevel.setText(offlineTrust);
         tvTrustLevel = findViewById(R.id.trust_level);
         double offlineTrust = MainActivity.appList.getOfflineTrust();
         String offlineTrustString = String.valueOf(offlineTrust);

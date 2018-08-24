@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Анализатор</string>
+    <string name="hello_world">Привет, мир!</string>
+    <string name="action_settings">Настройки</string>
+    <string name="current_version">Текущая версия:</string>
+    <string name="search">Поиск</string>
+    <string name="pref_white_list_label">Источник</string>
+    <string name="trust_level_label">Оффлайн оценка:</string>
+    <string name="online_trust_level_label">Общая оценка:</string>
+    <string name="first_tab">"Ваши Данные "</string>
+    <string name="third_tab">Разрешения</string>
+    <string name="detailed_app_version_label">версия:</string>
+    <string name="detailed_popularity_level" translatable="false">Популярность:</string>
+    <string name="high">высокий</string>
+    <string name="middle">средний</string>
+    <string name="low">низкий</string>
+    <string name="detailed_app_origin_source">Источник:</string>
+    <string name="standard_apps">Стандартные приложения</string>
+    <string name="undefined" translatable="false">Нет</string>
+    <string name="internet_access" translatable="false">Доступ в Интернет:</string>
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+    <string name="detailed_app_last_run_time">Последний запуск:</string>
+    <string name="detailed_app_last_updated_time">Последнее обновление:</string>
+    <string name="last_run_time">Последний запуск:</string>
+    <string name="last_update_time">Последнее обновление:</string>
+    <string name="first_install_time">Дата установки:</string>
+    <string name="dangerous_permissions">Опасные разрешения:</string>
+    <string name="permission_groups">Группы разрешений:</string>
+    <string name="gp_rating">Рейтинг:</string>
+    <string name="gp_people">Люди:</string>
+    <string name="gp_installs">Установки:</string>
+    <string name="gp_update_time">Обновлено:</string>
+</resources>

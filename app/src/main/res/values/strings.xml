@@ -6,24 +6,24 @@
     <string name="search">Search</string>
     <string name="pref_white_list_label">Source</string>
     <string name="trust_level_label">Offline Trust: </string>
-    <string name="online_trust_level_label">Online Trust: </string>
-    <string name="google_play">Google Play </string>
+    <string name="online_trust_level_label">"Overall Trust: "</string>
+    <string name="google_play" translatable="false">Google Play </string>
 
     <string name="first_tab">User\'s Data</string>
-    <string name="second_tab">Google Play </string>
+    <string name="second_tab" translatable="false">Google Play </string>
     <string name="third_tab">Permissions</string>
 
 
-    <string name="detailed_app_name">Telegram</string>
+    <string name="detailed_app_name" translatable="false">Telegram</string>
     <string name="detailed_app_version_label">version: </string>
-    <string name="detailed_app_version">1.54</string>
+    <string name="detailed_app_version" translatable="false">1.54</string>
     <string name="detailed_popularity_level">Popularity Level: </string>
     <string name="high">high</string>
     <string name="middle">middle</string>
     <string name="low">low</string>
     <string name="detailed_app_origin_source">Origin Source: </string>
-    <string name="gp">GP</string>
-    <string name="amazon_store">Amazon Store</string>
+    <string name="gp" translatable="false">GP</string>
+    <string name="amazon_store" translatable="false">Amazon Store</string>
     <string name="standard_apps">Standard Apps</string>
     <string name="undefined">Undefined</string>
     <string name="internet_access">Internet Access: </string>
@@ -50,11 +50,6 @@
 
     <string name="pref_white_list_key" translatable="false">whitelist</string>
 
-    <string name="pref_white_list_default">Google</string>
-    <string name="pref_white_list_label_google">Google</string>
-    <string name="pref_white_list_label_cvedetails">CVE Details</string>
-    <string name="pref_white_list_label_checkpoint">Checkpoint</string>
-    <string name="pref_white_list_label_helpnetsecurity">HelpNetSecurity</string>
 
     <string name="pref_white_list_value_google" translatable="false">google</string>
     <string name="pref_white_list_value_cvedetails" translatable="false">cvedetails</string>

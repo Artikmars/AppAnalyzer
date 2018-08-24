@@ -11,10 +11,6 @@ import android.widget.TextView;
 
 public class PermissionsTabFragment extends Fragment {
 
-    /*   @BindView(R.id.requested_app_permissions)
-       TextView tvRequestedPermissions;
-       @BindView(R.id.granted_app_permissions)
-       TextView tvGrantedPermissions;*/
 
     public static PermissionsTabFragment newInstance() {
         PermissionsTabFragment fragment = new PermissionsTabFragment();

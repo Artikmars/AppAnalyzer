@@ -15,11 +15,8 @@ import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
@@ -28,9 +25,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ProgressBar;
 
 import com.artamonov.appanalyzer.data.database.AppList;
 import com.google.firebase.database.DatabaseReference;
@@ -55,19 +49,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
     public static final String TAG = "myLogs";
-    public static String url = "https://www.google.com/search?q=";
-    public static String urlGoogle = " vulnerabilities android";
 
     public static List<AppList> installedApps = new ArrayList<>();
     public static String installedAppsString;
     public static AppList appList;
     public static List<AppList> applicationsWidgetListUnsorted;
-    public static List<AppList> applicationsWidgetListSorted;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
     String appNameString, versionString;
-    private ProgressBar progressBar;
-    private Handler handler = new Handler();
     private String permissionGroupAmount;
     private long lastUpdatedTimeLong;
     private String appSource;
@@ -75,21 +64,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
                                               String permissionsAmount) {
 
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTime: " + updatedTime);
         double daysAfterLastUpdate = dateDiff(updatedTime);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastUpdate: " + daysAfterLastUpdate);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTime: " + runTime);
         double daysAfterLastRun = dateDiff(runTime);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: daysAfterLastRun: " + daysAfterLastRun);
         double permissionsAmountDouble;
         if (permissionsAmount != null) {
             permissionsAmountDouble = Double.valueOf(permissionsAmount);
         } else {
             permissionsAmountDouble = 30;
         }
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsAmountDouble: " + permissionsAmountDouble);
-
-
         double updatedTrust = mainTrustFormula(14, 7, daysAfterLastUpdate);
         double permissionsTrust = mainTrustFormula(7, 3, permissionsAmountDouble);
 
@@ -99,34 +81,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (runTimeTrust > 1) {
             runTimeTrust = 1;
         }
-
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: updatedTrust: ");
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: runTimeTrust: " + runTimeTrust);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: sourceTrust: " + sourceTrust);
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: permissionsTrust: " + permissionsTrust);
-
         double offlineTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.3 * sourceTrust + 0.4 * permissionsTrust) * 100;
-        Log.i(MainActivity.TAG, "getOfflineTrustLevel: offlineTrust: " + offlineTrust);
         return (double) Math.round(offlineTrust * 100) / 100;
-        // return Double.parseDouble(offlineTrustString);
-
-
-      /*  if (TextUtils.isEmpty(gpInstalls) || TextUtils.isEmpty(gpPeople) ||
-                TextUtils.isEmpty(gpRating)) {
-            return String.valueOf(sourceScore * 60);
-        }*/
-
-       /* if (gpInstalls.length() > 0 && gpInstalls.charAt(gpInstalls.length() - 1) == '+') {
-            gpInstalls = gpInstalls.substring(0, gpInstalls.length() - 1);
-        }*/
-
-/*
-        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-        Number n = format.parse(gpRating);
-        double rating = n.doubleValue();*/
-
-        //double downloads = number.doubleValue();
-
 
     }
 
@@ -200,32 +156,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //  progressBar = findViewById(R.id.progressBar);
-
-     /*   ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Downloading the App List ...");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
-        progress.setMax(100);
-        progress.show();*/
-
-
         RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
         final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(appRecyclerViewAdapter);
         appRecyclerViewAdapter.notifyDataSetChanged();
-
-       /* appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
-        appDetailViewModel.getAllApps().observe(this, new Observer<List<AppList>>() {
-            @Override
-            public void onChanged(@Nullable final List<AppList> words) {
-                // Update the cached copy of the applications in the adapter.
-                appRecyclerViewAdapter.setAppList(words);
-            }
-        });*/
-
         setupSharedPreferences();
         checkFirstRun();
 
@@ -238,26 +174,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
 
 
-        //  createApplicationsWidgetList();
 
     }
-
-   /* private void createApplicationsWidgetList() {
-        applicationsWidgetListUnsorted = null;
-        for (int i = 0; i < installedApps.size(); i++) {
-            AppList appList = null;
-            appList.setPackageName(installedApps.get(i).getName());
-            appList.setOfflineTrust(installedApps.get(i).getOfflineTrust());
-            applicationsWidgetListUnsorted.add(appList);
-
-        }
-        Collections.sort(applicationsWidgetListUnsorted);
-        applicationsWidgetListSorted = null;
-        for (int i = 0; i < 5; i++) {
-            applicationsWidgetListSorted.add(applicationsWidgetListUnsorted.get(i));
-        }
-    }*/
-
 
     @Override
     protected void onDestroy() {
@@ -306,44 +224,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private String installedAppsListToString(List<AppList> installedApps, int k) {
-
-        appNameString = installedApps.get(k).getName();
-        versionString = installedApps.get(k).getVersion();
-        //lastRunTimeString = installedApps.get(k).getLastRunTime();
-        //lastUpdateTimeString = installedApps.get(k).getLastUpdateTime();
-
-        installedAppsString = appNameString + "," + versionString;
-        Log.i(TAG, "installedAppsString " + installedAppsString);
-
-        return installedAppsString;
-    }
-
-    public boolean isNetworkAvailable() {
-
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private List<AppList> getInstalledApps() {
 
@@ -353,32 +233,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
          *                  for extracting the data)
          *
          */
-        Log.i(TAG, "in getInstalledApps");
 
         List<AppList> res = new ArrayList<>();
-        // public static List<AppList> serverList = new ArrayList<>();
         List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
-        // List<ApplicationInfo> packs = getPackageManager().getInstalledApplications(0);
-        Log.i(TAG, ".getInstalledPackages done. Size packs.size(): " + packs.size());
-
         Calendar c = Calendar.getInstance();
-        //c.add(Calendar.HOUR, -1);
         c.add(Calendar.YEAR, -1);
         long begin = c.getTimeInMillis();
         long end = System.currentTimeMillis();
-        // long day = 1000 * 60 * 60 * 24;
-        //  long delta = day * 365;
         UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
         mListUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST,
                 begin, end);
-        Log.i(TAG, ".getInstalledPackages done. Size  mListUsageStats.size(): " + mListUsageStats.size());
-        // Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        // startActivity(intent);
-
         for (int i = 0; i < packs.size(); i++) {
-            int progress = 100 / (packs.size());
-            //  progressBar.setProgress(progress + 100/packs.size());
-
             PackageInfo p = packs.get(i);
             if ((!isSystemPackage(p))) {
 
@@ -391,19 +256,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 appList.setLastUpdateTime(lastUpdateTime);
                 appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
                 String packageName = p.packageName;
-                Log.i(TAG, "packageName: " + packageName);
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
                 appSource = getAppSource(appSourceType, p);
-
-              /*  if (appSource.equals("Google Play")){
-                    String url = "https://play.google.com/store/apps/details?id=" + packageName + "&hl=en";
-                    Log.i(TAG, "packageName: " + url);
-                    GooglePlayParser.getGPUpdateTime(url, packageName);}
-             */
                 appList.setAppSource(appSource);
 
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
-//                ArrayList<String> appRequestedPermissionsListArray = new ArrayList<>(Arrays.asList(appRequestedPermissionsArray));
                 if (appRequestedPermissionsArray != null) {
                     Integer dangerousPermissionsAmount = getDangerousPermissions(appRequestedPermissionsArray).size();
                     String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
@@ -431,9 +288,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
                 long firstInstallTimeLong = p.firstInstallTime;
                 String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
-                Log.i(TAG, "firstInstallTimeLong: " + firstInstallTimeLong);
                 // String firstInstallTime = String.valueOf(p.firstInstallTime);
-                Log.i(TAG, "firstInstallTime" + firstInstallTime);
                 appList.setFirstInstallTime(firstInstallTime);
 
                 /* The Last Run Time can be extracted only from UsageStats
@@ -484,7 +339,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ArrayList<String> dangerousPermissionsList = new ArrayList<>();
         for (int i = 0; i < permissionsArray.length; i++) {
-            // Log.w(TAG, "getPermissionsBaseTypes: permission - " + permissionsArray[i]);
             try {
                 PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissionsArray[i], PackageManager.GET_META_DATA);
                 switch (permissionInfo.protectionLevel) {
@@ -503,8 +357,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ArrayList<String> permissionGroups = new ArrayList<>();
         for (int i = 0; i < dangerousPermissionsList.size(); i++) {
-            //Log.w(TAG, "getPermissionGroups: permission - " + dangerousPermissionsList.get(i));
-
             PermissionGroupInfo permissionGroupInfo = null;
             try {
                 PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(dangerousPermissionsList.get(i), PackageManager.GET_META_DATA);
@@ -513,7 +365,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 e.printStackTrace();
             }
             if (permissionGroupInfo != null) {
-                // Log.w(TAG, "getPermissionGroups:group - " + permissionGroupInfo.loadLabel(getPackageManager()));
                 permissionGroups.add((String) permissionGroupInfo.loadLabel(getPackageManager()));
             }
         }

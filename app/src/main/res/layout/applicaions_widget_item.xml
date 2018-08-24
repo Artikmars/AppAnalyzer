@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#ffffff"></TextView>
+        android:textColor="#ffffff" />
 
 </RelativeLayout>
