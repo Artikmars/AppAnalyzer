@@ -13,7 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import io.fabric.sdk.android.Fabric;
+
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
         AppRecyclerViewAdapter.ItemClickListener {
@@ -51,15 +54,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static final String TAG = "myLogs";
 
     public static List<AppList> installedApps = new ArrayList<>();
-    public static String installedAppsString;
     public static AppList appList;
     public static List<AppList> applicationsWidgetListUnsorted;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
-    String appNameString, versionString;
     private String permissionGroupAmount;
-    private long lastUpdatedTimeLong;
-    private String appSource;
 
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
                                               String permissionsAmount) {
@@ -133,19 +132,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     static double mainTrustFormula(double day1, double day2, double z) {
-        Log.i(MainActivity.TAG, "mainTrustFormula: day1: " + day1);
-        Log.i(MainActivity.TAG, "mainTrustFormula: day2: " + day2);
-        Log.i(MainActivity.TAG, "mainTrustFormula: daysAfterLastUpdate: " + z);
         double rest = 0.05;
         double exp = Math.log(2.0) / Math.log(1.0 + (day2 / day1));
-        Log.i(MainActivity.TAG, "mainTrustFormula: exp: " + exp);
         double exp2 = Math.pow((z / day1), exp);
-        Log.i(MainActivity.TAG, "mainTrustFormula: exp2: " + exp2);
         return (1.0 - rest) * Math.pow(0.5, exp2) + rest;
     }
 
     public byte[] drawableToByte(Drawable drawable) {
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+
+        // Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Crashlytics
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_main);
         RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
@@ -248,16 +252,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             if ((!isSystemPackage(p))) {
 
                 AppList appList = new AppList();
-                appList.setPackageName(p.packageName);
+                String packageName = p.packageName;
+                appList.setPackageName(packageName);
+                // Log.w(MainActivity.TAG, "packageName: " + packageName);
                 appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
+                // Log.w(MainActivity.TAG, "app name: " + p.applicationInfo.loadLabel(getPackageManager()).toString());
                 appList.setVersion(p.versionName);
-                lastUpdatedTimeLong = p.lastUpdateTime;
+                long lastUpdatedTimeLong = p.lastUpdateTime;
                 String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
                 appList.setLastUpdateTime(lastUpdateTime);
                 appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
-                String packageName = p.packageName;
+
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
-                appSource = getAppSource(appSourceType, p);
+                String appSource = getAppSource(appSourceType, p);
                 appList.setAppSource(appSource);
 
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);

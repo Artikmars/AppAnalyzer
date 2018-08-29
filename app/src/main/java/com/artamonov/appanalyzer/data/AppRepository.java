@@ -54,7 +54,9 @@ public class AppRepository {
 
         @Override
         protected Void doInBackground(AppList... app) {
-            taskDao.insert(app[0]);
+            if (app[0] != null) {
+                taskDao.insert(app[0]);
+            }
             return null;
         }
     }

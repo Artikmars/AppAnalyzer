@@ -22,7 +22,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -203,10 +206,39 @@ public class GooglePlayTabFragment extends Fragment {
                     Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
                 }
 
+                //Validation
+                try {
+                    Float.parseFloat(gpRating);
+                } catch (NumberFormatException e) {
+                    gpRating = "0";
+                }
+
+                String gpPeopleWithoutCommas = gpRatingPeopleAmount.replace(",", "");
+                try {
+                    Integer.parseInt(gpPeopleWithoutCommas);
+                } catch (NumberFormatException e) {
+                    gpPeopleWithoutCommas = "0";
+                }
+
+                String gpInstallsWithoutCommas = gpInstalls.replace(",", "");
+                String gpInstallsWithoutCommasAndPlus = gpInstallsWithoutCommas.replace("+", "");
+                try {
+                    Integer.parseInt(gpInstallsWithoutCommasAndPlus);
+
+                } catch (NumberFormatException e) {
+                    gpInstallsWithoutCommasAndPlus = "1";
+                }
+
+                try {
+                    new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH).parse(gpUpdatedTime);
+                } catch (ParseException e) {
+                    gpUpdatedTime = null;
+                }
+
                 parsedAppList = new AppList();
                 parsedAppList.setGpRating(gpRating);
-                parsedAppList.setGpPeople(gpRatingPeopleAmount);
-                parsedAppList.setGpInstalls(gpInstalls);
+                parsedAppList.setGpPeople(gpPeopleWithoutCommas);
+                parsedAppList.setGpInstalls(gpInstallsWithoutCommasAndPlus);
                 parsedAppList.setGpUpdated(gpUpdatedTime);
                 parsedAppList.setPackageName(MainActivity.appList.getPackageName());
 

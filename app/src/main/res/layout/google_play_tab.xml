@@ -109,27 +109,27 @@
     <TextView
         android:id="@+id/gpScore"
         style="@style/AppDescription"
-        android:layout_width="72dp"
-        android:layout_height="54dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="48dp"
+        android:layout_marginTop="16dp"
         android:text="@string/undefined"
         android:textColor="@android:color/holo_red_dark"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/gpScore_label" />
 
     <TextView
         android:id="@+id/gpScore_label"
         style="@style/AppDescription"
         android:layout_width="wrap_content"
-        android:layout_height="22dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:nextFocusForward="@id/gpScore"
         android:text="@string/online_trust_level_label"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/gp_app_rating" />
 
 </android.support.constraint.ConstraintLayout>

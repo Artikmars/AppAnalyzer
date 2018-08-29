@@ -39,8 +39,12 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/applications_widget_provider_info" />
-        </receiver>
 
+
+        </receiver>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="bbc9e5e6abfd52ec0b50443ba55e59f5c5e3f9f2" />
 
     </application>
 
