@@ -11,7 +11,6 @@ import java.util.List;
 
 class SectionPageAdapter extends FragmentPagerAdapter {
 
-    private final List<Fragment> fragmentList = new ArrayList<>();
     private List<String> fragmentTitlesList = new ArrayList<>();
 
     public SectionPageAdapter(FragmentManager fm) {

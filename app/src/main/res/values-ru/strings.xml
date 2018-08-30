@@ -11,14 +11,14 @@
     <string name="first_tab">"Ваши Данные "</string>
     <string name="third_tab">Разрешения</string>
     <string name="detailed_app_version_label">версия:</string>
-    <string name="detailed_popularity_level" translatable="false">Популярность:</string>
+    <string name="detailed_popularity_level">Популярность:</string>
     <string name="high">высокий</string>
     <string name="middle">средний</string>
     <string name="low">низкий</string>
     <string name="detailed_app_origin_source">Источник:</string>
     <string name="standard_apps">Стандартные приложения</string>
-    <string name="undefined" translatable="false">Нет</string>
-    <string name="internet_access" translatable="false">Доступ в Интернет:</string>
+    <string name="undefined">Нет</string>
+    <string name="internet_access">Доступ в Интернет:</string>
     <string name="yes">да</string>
     <string name="no">нет</string>
     <string name="detailed_app_last_run_time">Последний запуск:</string>

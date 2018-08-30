@@ -25,7 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AppDetailActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
         </activity>
 
         <service

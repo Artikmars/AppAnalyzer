@@ -1,5 +1,6 @@
 package com.artamonov.appanalyzer;
 
+import android.app.ActivityOptions;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.appwidget.AppWidgetManager;
@@ -23,6 +24,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static List<AppList> applicationsWidgetListUnsorted;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
+    private Context context;
     private String permissionGroupAmount;
 
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     static int getSourceTrust(String appSource) {
-        if (appSource.equals("Google Play")) {
+        if (appSource.equals(R.string.item_position)) {
             return 1;
         } else return 0;
     }
@@ -160,6 +163,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         RecyclerView recyclerView = findViewById(R.id.app_list);
         installedApps = getInstalledApps();
         final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
@@ -286,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 //Connect to the Firebase Realtime Database
                 DatabaseReference permissionsReference = FirebaseDatabase
                         .getInstance()
-                        .getReference("permission_group_amount");
+                        .getReference(getString(R.string.perm_group_amount));
                 String id = permissionsReference.push().getKey();
                 if (id != null) {
                     permissionsReference.child(id).setValue(permissionGroupAmount);
@@ -318,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         break;
                     } else {
                         lastTimeExecuted = 0;
-                        appList.setLastRunTime("NO available data");
+                        appList.setLastRunTime(getString(R.string.no_available_data));
                     }
                 }
 
@@ -387,15 +394,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private String getAppSource(String appSourceType, PackageInfo p) {
         boolean isSystemApp = isSystemPackage(p);
         if (isSystemApp) {
-            return "System Application";
+            return getString(R.string.system_app);
         } else {
-            Log.i(TAG, "appSourceType: " + appSourceType);
+            Log.i(TAG, getString(R.string.source_type) + appSourceType);
             if (TextUtils.isEmpty(appSourceType)) {
-                return "Unknown Source";
-            } else if (appSourceType.equals("com.android.vending")) {
-                return "Google Play";
-            } else if (appSourceType.equals("com.amazon.venezia")) {
-                return "Amazon Store";
+                return getString(R.string.unknown_source);
+            } else if (appSourceType.equals(getString(R.string.vending_package))) {
+                return getString(R.string.google_play);
+            } else if (appSourceType.equals(getString(R.string.venezia_package))) {
+                return getString(R.string.amazon_store);
             } else return "Undefined Market";
         }
         //
@@ -408,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private String currentMilliSecondsToDate(long time) {
 
-        return new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss", Locale.GERMAN)
+        return new SimpleDateFormat(getString(R.string.date_format), Locale.GERMAN)
                 .format(new Date(time));
 
     }
@@ -435,8 +442,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void onItemClick(int position) {
         appList = installedApps.get(position);
         Intent intent = new Intent(this, AppDetailActivity.class);
-        intent.putExtra("position", position);
-        intent.putExtra("logo", drawableToByte(appList.getIcon()));
-        startActivity(intent);
+        intent.putExtra(getString(R.string.item_position), position);
+        intent.putExtra(getString(R.string.item_logo), drawableToByte(appList.getIcon()));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, bundle);
+        } else {
+            startActivity(intent);
+        }
     }
 }

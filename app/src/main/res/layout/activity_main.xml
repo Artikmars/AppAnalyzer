@@ -15,5 +15,9 @@
         android:focusable="true"
         android:scrollbars="none" />
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
 
 </RelativeLayout>

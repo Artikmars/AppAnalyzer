@@ -6,12 +6,17 @@
     android:focusable="true">
 
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <ImageView
         android:id="@+id/detailed_app_icon"
         android:layout_width="75dp"
         android:layout_height="67dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="71dp"
+        android:layout_toStartOf="@+id/detailed_app_version_label"
         android:contentDescription="@string/hello_world"
         android:nextFocusForward="@id/detailed_app_name"
         android:paddingBottom="8dp" />
@@ -60,12 +65,12 @@
         style="@style/AppDescriptionBig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:nextFocusDown="@id/tab_layout"
-        android:nextFocusRight="@id/trust_level"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="103dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="152dp"
+        android:nextFocusDown="@id/tab_layout"
+        android:nextFocusRight="@id/trust_level"
         android:text="@string/trust_level_label" />
 
     <TextView
@@ -86,26 +91,15 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="195dp"
         android:focusable="true"
         android:nextFocusDown="@id/view_pager"
-        android:layout_centerHorizontal="true"
-        android:nextFocusUp="@id/trust_level"
-        android:layout_marginTop="152dp">
+        android:nextFocusUp="@id/trust_level">
 
 
     </android.support.design.widget.TabLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="210dp"
-        android:focusable="true"
-        android:nextFocusDown="@id/adView"
-        android:nextFocusUp="@id/tab_layout">
-
-    </android.support.v4.view.ViewPager>
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
@@ -116,6 +110,19 @@
         android:nextFocusUp="@id/view_pager"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="250dp"
+        android:focusable="true"
+        android:nextFocusDown="@id/adView"
+        android:nextFocusUp="@id/tab_layout">
+
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>
 

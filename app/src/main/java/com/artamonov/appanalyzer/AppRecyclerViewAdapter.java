@@ -17,10 +17,8 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     private static ItemClickListener listener;
     private List<AppList> appList;
-    private Context context;
 
     public AppRecyclerViewAdapter(Context context, List<AppList> appList, ItemClickListener itemClickListener) {
-        this.context = context;
         this.appList = appList;
         listener = itemClickListener;
     }

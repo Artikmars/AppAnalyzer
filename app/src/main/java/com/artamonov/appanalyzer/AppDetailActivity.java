@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -78,6 +80,16 @@ public class AppDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_app_analyzer);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         ButterKnife.bind(this);
 
 
@@ -103,7 +115,7 @@ public class AppDetailActivity extends AppCompatActivity {
         mAdView.loadAd(adRequest);
 
         Bundle extras = getIntent().getExtras();
-        byte[] byteLogo = extras.getByteArray("logo");
+        byte[] byteLogo = extras.getByteArray(getString(R.string.item_logo));
         Bitmap appLogo = BitmapFactory.decodeByteArray(byteLogo, 0, byteLogo.length);
 
         ImageView ivLogo = findViewById(R.id.detailed_app_icon);
