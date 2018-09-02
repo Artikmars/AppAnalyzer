@@ -120,7 +120,15 @@ public class AppDetailActivity extends AppCompatActivity {
 
         ImageView ivLogo = findViewById(R.id.detailed_app_icon);
         tvAppName.setText(MainActivity.appList.getName());
-        tvAppVersion.setText(MainActivity.appList.getVersion());
+
+        if (MainActivity.appList.getVersion().length() >= 15) {
+            String shortenedVersion = MainActivity.appList.getVersion().substring(0, 15);
+            tvAppVersion.setText(shortenedVersion);
+        } else {
+            tvAppVersion.setText(MainActivity.appList.getVersion());
+        }
+
+
         ivLogo.setImageBitmap(appLogo);
 
         tabLayout.setupWithViewPager(viewPager);

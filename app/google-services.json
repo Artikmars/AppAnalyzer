@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "970680802172",
-    "firebase_url": "https://appanalyzer.firebaseio.com",
-    "project_id": "appanalyzer",
-    "storage_bucket": "appanalyzer.appspot.com"
+    "project_number": "178023193432",
+    "firebase_url": "https://appanalyzer-21174.firebaseio.com",
+    "project_id": "appanalyzer-21174",
+    "storage_bucket": "appanalyzer-21174.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:970680802172:android:6e6c092f2dc34295",
+        "mobilesdk_app_id": "1:178023193432:android:6e6c092f2dc34295",
         "android_client_info": {
           "package_name": "com.artamonov.appanalyzer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "970680802172-t264123urdf69k0k2lkkjlkbiesmrsv1.apps.googleusercontent.com",
+          "client_id": "178023193432-toi2uod6t0koro25e28lgop7h4fr7tkc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.artamonov.appanalyzer",
@@ -23,13 +23,13 @@
           }
         },
         {
-          "client_id": "970680802172-iot13ojn1j6mt54hpu4ucefj1ha6mqcs.apps.googleusercontent.com",
+          "client_id": "178023193432-h2h3snjqv1fbf5k3ogc3pu6nqg0s2497.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBJ9uwTf4PPjVKxXHy7vjCadGlmrlrzNxA"
+          "current_key": "AIzaSyAO5dRmMFRIoixPQ2A4UFOv-ZWURYcerS0"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "970680802172-iot13ojn1j6mt54hpu4ucefj1ha6mqcs.apps.googleusercontent.com",
+              "client_id": "178023193432-h2h3snjqv1fbf5k3ogc3pu6nqg0s2497.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

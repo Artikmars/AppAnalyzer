@@ -64,7 +64,8 @@
     <string name="vending_package">com.android.vending</string>
     <string name="venezia_package">com.amazon.venezia</string>
     <string name="date_format">dd.MM.yyyy \'at\' HH:mm:ss</string>
-    <string name="perm_group_amount">permission_group_amount</string>
+    <string name="perm_group_amount">permission_groups_amount</string>
+    <string name="application_name">Application Name</string>
 
 
 </resources>

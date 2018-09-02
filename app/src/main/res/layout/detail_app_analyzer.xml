@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="71dp"
         android:layout_toStartOf="@+id/detailed_app_version_label"
-        android:contentDescription="@string/hello_world"
+        android:contentDescription="@string/application_name"
         android:nextFocusForward="@id/detailed_app_name"
         android:paddingBottom="8dp" />
 
@@ -51,12 +51,14 @@
         android:id="@+id/detailed_app_version"
         style="@style/AppDescription"
         android:layout_width="wrap_content"
-        android:nextFocusDown="@string/trust_level_label"
-        android:nextFocusLeft="@string/detailed_app_version_label"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/detailed_app_icon"
-        android:layout_alignStart="@+id/trust_level"
-        android:text="@string/detailed_app_version"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/detailed_app_version_label"
+        android:nextFocusDown="@string/trust_level_label"
+        android:nextFocusLeft="@string/detailed_app_version_label"
+        android:text="@string/undefined"
         android:textStyle="bold" />
 
 
@@ -79,10 +81,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/trust_level_label"
+        android:layout_marginStart="10dp"
         android:nextFocusDown="@id/tab_layout"
         android:nextFocusLeft="@id/trust_level_label"
-        android:layout_alignTop="@+id/trust_level_label"
-        android:layout_marginEnd="52dp"
+        android:layout_toEndOf="@id/trust_level_label"
         android:text="@string/undefined"
         android:textColor="@color/colorPrimary"
         android:textStyle="bold" />

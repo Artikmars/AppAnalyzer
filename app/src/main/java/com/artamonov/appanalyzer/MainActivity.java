@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public long lastTimeExecuted;
     private Context context;
     private String permissionGroupAmount;
+    private boolean isFirstRun = true;
 
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
                                               String permissionsAmount) {
@@ -168,13 +169,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = findViewById(R.id.app_list);
+        isFirstRun = checkFirstRun();
         installedApps = getInstalledApps();
         final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(appRecyclerViewAdapter);
         appRecyclerViewAdapter.notifyDataSetChanged();
         setupSharedPreferences();
-        checkFirstRun();
+
 
         applicationsWidgetListUnsorted = installedApps;
         Collections.sort(applicationsWidgetListUnsorted, new Comparator<AppList>() {
@@ -195,8 +197,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    private void checkFirstRun() {
-
+    private boolean checkFirstRun() {
+        boolean isFirstRun = false;
+        Log.w(MainActivity.TAG, "onCheck: isFirstRun: " + isFirstRun);
         final String PREFS_NAME = "FirstTimeUsedPrefs";
         final String PREF_VERSION_CODE_KEY = "version_code";
         final int DOES_NOT_EXIST = -1;
@@ -211,19 +214,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // Check for first run or upgrade
         if (currentVersionCode == savedVersionCode) {
             // This is just a normal run
-            return;
+            Log.w(MainActivity.TAG, "onCheck: normal run: " + isFirstRun);
 
         } else if (savedVersionCode == DOES_NOT_EXIST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             startActivity(intent);
-
-            //upgrade case
-        } else if (currentVersionCode > savedVersionCode) {
-            return;
+            isFirstRun = true;
+            Log.w(MainActivity.TAG, "onCheck: savedVersionCode == DOES_NOT_EXIST " + isFirstRun);
+        }
+        //upgrade case
+        else if (currentVersionCode > savedVersionCode) {
+            Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
         }
 
         // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+        return isFirstRun;
 
     }
 
@@ -234,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadSourceFromPreferences(sharedPreferences);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private List<AppList> getInstalledApps() {
@@ -290,15 +297,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     appList.setDangerousPermissionsAmount("0");
                 }
 
-                //Connect to the Firebase Realtime Database
-                DatabaseReference permissionsReference = FirebaseDatabase
-                        .getInstance()
-                        .getReference(getString(R.string.perm_group_amount));
-                String id = permissionsReference.push().getKey();
-                if (id != null) {
-                    permissionsReference.child(id).setValue(permissionGroupAmount);
-                }
 
+                //Connect to the Firebase Realtime Database
+                if (isFirstRun) {
+                    DatabaseReference permissionsReference = FirebaseDatabase
+                            .getInstance()
+                            .getReference(getString(R.string.perm_group_amount));
+                    String id = permissionsReference.push().getKey();
+                    if (id != null) {
+                        permissionsReference.child(id).setValue(permissionGroupAmount);
+                    }
+                } else {
+                    Log.w(MainActivity.TAG, "not first run");
+                }
 
                 long firstInstallTimeLong = p.firstInstallTime;
                 String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
