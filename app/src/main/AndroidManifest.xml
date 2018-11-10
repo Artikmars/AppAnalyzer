@@ -29,10 +29,17 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <activity
+            android:name=".OverviewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+
+        </activity>
+
         <service
-            android:name=".ApplicationsWidgetService"
+            android:name=".widget.ApplicationsWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
-        <receiver android:name=".ApplicationsWidgetProvider">
+        <receiver android:name=".widget.ApplicationsWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -46,6 +53,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bbc9e5e6abfd52ec0b50443ba55e59f5c5e3f9f2" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
 
     </application>
 

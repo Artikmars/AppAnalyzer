@@ -1,4 +1,4 @@
-package com.artamonov.appanalyzer;
+package com.artamonov.appanalyzer.widget;
 
 import android.content.Intent;
 import android.widget.RemoteViewsService;

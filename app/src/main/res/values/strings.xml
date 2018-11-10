@@ -20,7 +20,7 @@
     <string name="high">high</string>
     <string name="middle">middle</string>
     <string name="low">low</string>
-    <string name="detailed_app_origin_source">Origin Source: </string>
+    <string name="detailed_app_origin_source">Source of Origin: </string>
     <string name="gp" translatable="false">GP</string>
     <string name="amazon_store" translatable="false">Amazon Store</string>
     <string name="standard_apps">Standard Apps</string>
@@ -33,9 +33,6 @@
     <string name="last_run_time">Last Run Time: </string>
     <string name="last_update_time">Last Updated Time: </string>
     <string name="first_install_time">First Install Time: </string>
-
-    <string name="requested_app_permissions">Requested Permissions: </string>
-    <string name="granted_app_permissions">Granted Permissions: </string>
     <string name="dangerous_permissions">Dangerous Permissions: </string>
     <string name="permission_groups">Permission Groups: </string>
 
@@ -60,12 +57,19 @@
     <string name="system_app">System Application</string>
     <string name="source_type">appSourceType:</string>
     <string name="unknown_source">Unknown Source</string>
-    <string name="google_play">Google Play</string>
-    <string name="vending_package">com.android.vending</string>
-    <string name="venezia_package">com.amazon.venezia</string>
-    <string name="date_format">dd.MM.yyyy \'at\' HH:mm:ss</string>
+    <string name="google_play" translatable="false">Google Play</string>
+    <string name="vending_package" translatable="false">com.android.vending</string>
+    <string name="venezia_package" translatable="false">com.amazon.venezia</string>
+    <string name="date_format" translatable="false">dd.MM.yyyy \'at\' HH:mm:ss</string>
     <string name="perm_group_amount">permission_groups_amount</string>
     <string name="application_name">Application Name</string>
 
+    <string name="overview">Overview</string>
+    <string name="overall_statistics">Overall Statistics</string>
+    <string name="applications_installed_amount">Applications Installed: </string>
+    <string name="apps_with_high_score">More than 80/100 score: </string>
+    <string name="apps_with_middle_score">Between 60 and 80 score: </string>
+    <string name="apps_with_low_score">Less than 60 score: </string>
+    <string name="default_value" translatable="false">0</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.artamonov.appanalyzer;
+package com.artamonov.appanalyzer.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -6,10 +6,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import com.artamonov.appanalyzer.GooglePlayTabFragment;
+import com.artamonov.appanalyzer.MainActivity;
+import com.artamonov.appanalyzer.MainDetailTabFragment;
+import com.artamonov.appanalyzer.PermissionsTabFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
-class SectionPageAdapter extends FragmentPagerAdapter {
+public class SectionPageAdapter extends FragmentPagerAdapter {
 
     private List<String> fragmentTitlesList = new ArrayList<>();
 

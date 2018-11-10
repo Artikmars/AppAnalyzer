@@ -1,10 +1,12 @@
-package com.artamonov.appanalyzer;
+package com.artamonov.appanalyzer.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.artamonov.appanalyzer.R;
 
 /**
  * Implementation of App Widget functionality.

@@ -11,9 +11,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.artamonov.appanalyzer.adapter.SectionPageAdapter;
 import com.artamonov.appanalyzer.data.database.AppList;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -59,22 +61,27 @@ public class AppDetailActivity extends AppCompatActivity {
         double updatedTrust = mainTrustFormula(14, 7, daysAfterLastUpdate);
         double updatedGpTrust = mainTrustFormula(14, 7, daysAfterLastUpdateOnGp);
         double permissionsTrust = mainTrustFormula(7, 3, permissionsAmountDouble);
-
+        Log.w(MainActivity.TAG, "sourceTrust in formula: " + appSource);
         int sourceTrust = getSourceTrust(appSource);
+        Log.w(MainActivity.TAG, "sourceTrust score: " + sourceTrust);
 
         double runTimeTrust = daysAfterLastRun / (2.0 * 14.0);
         if (runTimeTrust > 1) {
             runTimeTrust = 1;
         }
-        double metaData = (Math.log(gpPeopleInt / gpRatingInt) + Math.log(gpInstallsInt));
-        double normalizedMetaData = (metaData - 8) / (46 - 8);
+        //double metaData = (Math.log(gpPeopleInt / gpRatingInt) + Math.log(gpInstallsInt));
+        // double normalizedMetaData = (metaData - 8) / (46 - 8);
+        double metaData = gpRatingInt * (Math.log(gpPeopleInt) + Math.log(gpInstallsInt));
+        double normalizedMetaData = metaData / 160;
 
-        double overallTrust = (0.15 * updatedTrust + 0.05 * runTimeTrust + 0.25 * normalizedMetaData +
+        Log.w(MainActivity.TAG, "updated time: " + 20 * updatedTrust + ", runTime: "
+                + 5 * runTimeTrust + ", normalizedMetaData: " + 20 * normalizedMetaData
+                + ", permissions: " + 30 * permissionsTrust + ", source: " + 20 * sourceTrust);
+        double overallTrust = (0.2 * updatedTrust + 0.05 * runTimeTrust + 0.2 * normalizedMetaData +
                 0.05 * updatedGpTrust + 0.2 * sourceTrust + 0.3 * permissionsTrust) * 100;
         return (double) Math.round(overallTrust * 100) / 100;
 
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +134,6 @@ public class AppDetailActivity extends AppCompatActivity {
         } else {
             tvAppVersion.setText(MainActivity.appList.getVersion());
         }
-
 
         ivLogo.setImageBitmap(appLogo);
 

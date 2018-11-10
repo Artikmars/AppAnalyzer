@@ -6,6 +6,7 @@
     <string name="current_version">Текущая версия:</string>
     <string name="search">Поиск</string>
     <string name="pref_white_list_label">Источник</string>
+    <string name="source_type">Источник: </string>
     <string name="trust_level_label">Оффлайн оценка:</string>
     <string name="online_trust_level_label">Общая оценка:</string>
     <string name="first_tab">"Ваши Данные "</string>
@@ -17,10 +18,12 @@
     <string name="low">низкий</string>
     <string name="detailed_app_origin_source">Источник:</string>
     <string name="standard_apps">Стандартные приложения</string>
+    <string name="system_app">Стандартное приложение</string>
     <string name="undefined">Нет</string>
     <string name="internet_access">Доступ в Интернет:</string>
     <string name="yes">да</string>
     <string name="no">нет</string>
+    <string name="no_available_data">Нет данных</string>
     <string name="detailed_app_last_run_time">Последний запуск:</string>
     <string name="detailed_app_last_updated_time">Последнее обновление:</string>
     <string name="last_run_time">Последний запуск:</string>
@@ -32,4 +35,18 @@
     <string name="gp_people">Люди:</string>
     <string name="gp_installs">Установки:</string>
     <string name="gp_update_time">Обновлено:</string>
+    <string name="app_widget_list">Список приложений виджета</string>
+    <string name="item_position">Позиция</string>
+    <string name="item_logo">Лого</string>
+    <string name="unknown_source">Неизвестный источник</string>
+    <string name="perm_group_amount">Группы разрешений:</string>
+    <string name="application_name">Название</string>
+    <string name="overview">Статистика</string>
+    <string name="applications_installed_amount">Количество установок:</string>
+    <string name="apps_with_high_score">"Приложения с уровнем доверия больше чем 80: "</string>
+    <string name="apps_with_middle_score">"Приложения с уровнем доверия между 60 и 80: "</string>
+    <string name="apps_with_low_score">"Приложения с уровнем доверия меньше чем 60: "</string>
+    <string name="overall_statistics">Общая Статистика</string>
+
+
 </resources>

@@ -27,11 +27,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.artamonov.appanalyzer.adapter.AppRecyclerViewAdapter;
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.artamonov.appanalyzer.widget.ApplicationsWidgetProvider;
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
@@ -58,9 +65,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static List<AppList> installedApps = new ArrayList<>();
     public static AppList appList;
     public static List<AppList> applicationsWidgetListUnsorted;
+    private static Integer appInstalledAmount;
+    private static Integer highOfflineScoreApps;
+    private static Integer middleOfflineScoreApps;
+    private static Integer lowOfflineScoreApps;
     public List<UsageStats> mListUsageStats;
     public long lastTimeExecuted;
-    private Context context;
     private String permissionGroupAmount;
     private boolean isFirstRun = true;
 
@@ -88,6 +98,38 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         return (double) Math.round(offlineTrust * 100) / 100;
 
     }
+
+    public static void getHighOfflineScoreApps() {
+        int count = 0;
+        for (int i = 0; i < installedApps.size(); i++) {
+            if (installedApps.get(i).getOfflineTrust() >= 80) {
+                count++;
+            }
+        }
+        Log.i(TAG, "highOfflineScoreApps: " + highOfflineScoreApps);
+        highOfflineScoreApps = count;
+    }
+
+    public static void getMiddleOfflineScoreApps() {
+        int count = 0;
+        for (int i = 0; i < installedApps.size(); i++) {
+            if (installedApps.get(i).getOfflineTrust() >= 60 && installedApps.get(i).getOfflineTrust() < 80) {
+                count++;
+            }
+        }
+        middleOfflineScoreApps = count;
+    }
+
+    public static void getLowOfflineScoreApps() {
+        int count = 0;
+        for (int i = 0; i < installedApps.size(); i++) {
+            if (installedApps.get(i).getOfflineTrust() < 60) {
+                count++;
+            }
+        }
+        lowOfflineScoreApps = count;
+    }
+
 
     static int dateDiffGp(String gpPublished) {
         if (gpPublished == null) {
@@ -120,7 +162,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     static int getSourceTrust(String appSource) {
-        if (appSource.equals(R.string.item_position)) {
+
+        if (appSource.equals("Google Play")) {
             return 1;
         } else return 0;
     }
@@ -160,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Crashlytics
         Fabric.with(this, new Crashlytics());
 
@@ -185,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
             }
         });
-
 
 
     }
@@ -233,6 +276,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.overview_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void setupSharedPreferences() {
 
         SharedPreferences sharedPreferences = android.support.v7.preference.PreferenceManager
@@ -241,6 +290,25 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.overview) {
+            getHighOfflineScoreApps();
+            getMiddleOfflineScoreApps();
+            getLowOfflineScoreApps();
+            Intent intent = new Intent(this, OverviewActivity.class);
+            Log.i(TAG, "applications_amount: " + installedApps.size() + " high_offline_score_apps: " + highOfflineScoreApps
+                    + "middle_offline_score_apps: " + middleOfflineScoreApps);
+            intent.putExtra("applications_amount", installedApps.size());
+            intent.putExtra("high_offline_score_apps", highOfflineScoreApps);
+            intent.putExtra("middle_offline_score_apps", middleOfflineScoreApps);
+            intent.putExtra("low_offline_score_apps", lowOfflineScoreApps);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     private List<AppList> getInstalledApps() {
@@ -279,6 +347,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
                 String appSourceType = getPackageManager().getInstallerPackageName(packageName);
                 String appSource = getAppSource(appSourceType, p);
+                Log.w(TAG, "source: " + appSource);
                 appList.setAppSource(appSource);
 
                 String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
@@ -303,10 +372,29 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     DatabaseReference permissionsReference = FirebaseDatabase
                             .getInstance()
                             .getReference(getString(R.string.perm_group_amount));
+                    Log.w(MainActivity.TAG, "permissionsReference: " + permissionsReference);
                     String id = permissionsReference.push().getKey();
+
+                    permissionsReference.child(id).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            Log.w(MainActivity.TAG, "onDataChange: " + snapshot.getValue());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.w(MainActivity.TAG, "onCancelled: " + databaseError.getMessage());
+                        }
+                    });
+
+
+                    Log.w(MainActivity.TAG, "id: " + id);
                     if (id != null) {
                         permissionsReference.child(id).setValue(permissionGroupAmount);
+                        Log.w(MainActivity.TAG, "permissionGroupAmount: " + permissionGroupAmount);
                     }
+
+
                 } else {
                     Log.w(MainActivity.TAG, "not first run");
                 }
@@ -416,7 +504,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return getString(R.string.amazon_store);
             } else return "Undefined Market";
         }
-        //
     }
 
     private boolean isSystemPackage(PackageInfo pkgInfo) {

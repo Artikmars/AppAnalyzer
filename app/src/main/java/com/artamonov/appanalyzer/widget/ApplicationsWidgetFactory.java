@@ -1,9 +1,11 @@
-package com.artamonov.appanalyzer;
+package com.artamonov.appanalyzer.widget;
 
 import android.content.Context;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
+import com.artamonov.appanalyzer.MainActivity;
+import com.artamonov.appanalyzer.R;
 import com.artamonov.appanalyzer.data.database.AppList;
 
 import java.util.List;
@@ -43,8 +45,6 @@ class ApplicationsWidgetFactory implements RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         RemoteViews rView = new RemoteViews(context.getPackageName(),
                 R.layout.applicaions_widget_item);
-
-
         rView.setTextViewText(R.id.tvItemApp, widgetAppsList.get(position).getName() + ": " +
                 widgetAppsList.get(position).getOfflineTrust());
         return rView;

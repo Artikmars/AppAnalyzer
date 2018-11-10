@@ -25,9 +25,32 @@ public class AppList {
     private String gpPeople;
     private String gpUpdated;
     private String gpUpdatedInMilliseconds;
+
     @Ignore
     private Drawable icon;
+    private byte[] byteIcon;
+    private boolean isOnline;
+    private String appSource;
+    private double offlineTrust;
+    private String overallTrust;
+    private String dangerousPermissionsAmount;
+    private String permissionGroups;
+    private String permissionGroupsAmount;
 
+    public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
+                   String gpRating, String gpUpdated) {
+        //  this.id = id;
+        this.packageName = packageName;
+        this.version = versionName;
+        this.gpInstalls = gpInstalls;
+        this.gpPeople = gpPeople;
+        this.gpRating = gpRating;
+        this.gpUpdated = gpUpdated;
+    }
+
+    public AppList() {
+
+    }
     public long getLastUpdateTimeInMilliseconds() {
         return lastUpdateTimeInMilliseconds;
     }
@@ -52,12 +75,6 @@ public class AppList {
         this.gpUpdatedInMilliseconds = gpUpdatedInMilliseconds;
     }
 
-    private byte[] byteIcon;
-    private boolean isOnline;
-    private String appSource;
-    private double offlineTrust;
-    private String overallTrust;
-
     public double getOfflineTrust() {
         return offlineTrust;
     }
@@ -73,10 +90,6 @@ public class AppList {
     public void setOverallTrust(String overallTrust) {
         this.overallTrust = overallTrust;
     }
-    private String dangerousPermissionsAmount;
-    private String permissionGroups;
-
-    private String permissionGroupsAmount;
 
     public String getPermissionGroupsAmount() {
         return permissionGroupsAmount;
@@ -92,14 +105,6 @@ public class AppList {
 
     public void setPermissionGroups(String permissionGroups) {
         this.permissionGroups = permissionGroups;
-    }
-
-    public String getDangerousPermissionsAmount() {
-        return dangerousPermissionsAmount;
-    }
-
-    public void setDangerousPermissionsAmount(String dangerousPermissionsAmount) {
-        this.dangerousPermissionsAmount = dangerousPermissionsAmount;
     }
     /*   private ArrayList<String> appRequestedPermissions;
     private ArrayList<String> appGrantedPermissions;
@@ -117,19 +122,12 @@ public class AppList {
         this.gpUpdated = gpUpdated;
     }*/
 
-    public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
-                   String gpRating, String gpUpdated) {
-        //  this.id = id;
-        this.packageName = packageName;
-        this.version = versionName;
-        this.gpInstalls = gpInstalls;
-        this.gpPeople = gpPeople;
-        this.gpRating = gpRating;
-        this.gpUpdated = gpUpdated;
+    public String getDangerousPermissionsAmount() {
+        return dangerousPermissionsAmount;
     }
 
-    public AppList() {
-
+    public void setDangerousPermissionsAmount(String dangerousPermissionsAmount) {
+        this.dangerousPermissionsAmount = dangerousPermissionsAmount;
     }
 
     // public Integer getId() {
