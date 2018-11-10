@@ -28,4 +28,4 @@ Libraries Used:
 * **Butterknife** — casting views
 * **Espresso** — establishing UI tests
 
-![Alt Text](https://i.imgflip.com/2m84xb.gif)
+![Alt Text](https://im4.ezgif.com/tmp/ezgif-4-59a932f0c322.gif)
