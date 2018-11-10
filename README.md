@@ -27,3 +27,5 @@ Libraries Used:
 * **Jsoup** — parsing Google Play data
 * **Butterknife** — casting views
 * **Espresso** — establishing UI tests
+
+![Alt Text](https://i.imgflip.com/2m84xb.gif)
