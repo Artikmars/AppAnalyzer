@@ -1,6 +1,7 @@
 package com.artamonov.appanalyzer;
 
 import android.app.ActivityOptions;
+import android.app.ProgressDialog;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.appwidget.AppWidgetManager;
@@ -16,6 +17,7 @@ import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.artamonov.appanalyzer.adapter.AppRecyclerViewAdapter;
@@ -73,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public long lastTimeExecuted;
     private String permissionGroupAmount;
     private boolean isFirstRun = true;
+    private ProgressDialog progressDialog;
+    private AppRecyclerViewAdapter appRecyclerViewAdapter;
+    private RecyclerView recyclerView;
+
 
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
                                               String permissionsAmount) {
@@ -212,24 +219,26 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView recyclerView = findViewById(R.id.app_list);
+
+        // progressBar = findViewById(R.id.progressBar);
+        //  progressBar.setVisibility(View.VISIBLE);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Retrieving the list of installed applications ...");
+        progressDialog.setTitle("In Progress");
+        // progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+
         isFirstRun = checkFirstRun();
-        installedApps = getInstalledApps();
-        final AppRecyclerViewAdapter appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
+        recyclerView = findViewById(R.id.app_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.setAdapter(appRecyclerViewAdapter);
-        appRecyclerViewAdapter.notifyDataSetChanged();
+
+        new getInstalledApplicationsTask().execute();
         setupSharedPreferences();
-
-
-        applicationsWidgetListUnsorted = installedApps;
-        Collections.sort(applicationsWidgetListUnsorted, new Comparator<AppList>() {
-            @Override
-            public int compare(AppList appList1, AppList appList2) {
-                return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
-            }
-        });
-
 
     }
 
@@ -265,21 +274,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             isFirstRun = true;
             Log.w(MainActivity.TAG, "onCheck: savedVersionCode == DOES_NOT_EXIST " + isFirstRun);
         }
-        //upgrade case
+        //upgrade case  Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
         else if (currentVersionCode > savedVersionCode) {
             Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
         }
-
         // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
         return isFirstRun;
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.overview_menu, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     private void setupSharedPreferences() {
@@ -308,133 +309,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-    private List<AppList> getInstalledApps() {
-
-        /** @param time = current time
-         *  @param delta = initial period
-         *  @param interval = time - delta (it is the time interval which is used by UsageStats
-         *                  for extracting the data)
-         *
-         */
-
-        List<AppList> res = new ArrayList<>();
-        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.YEAR, -1);
-        long begin = c.getTimeInMillis();
-        long end = System.currentTimeMillis();
-        UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-        mListUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST,
-                begin, end);
-        for (int i = 0; i < packs.size(); i++) {
-            PackageInfo p = packs.get(i);
-            if ((!isSystemPackage(p))) {
-
-                AppList appList = new AppList();
-                String packageName = p.packageName;
-                appList.setPackageName(packageName);
-                // Log.w(MainActivity.TAG, "packageName: " + packageName);
-                appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
-                // Log.w(MainActivity.TAG, "app name: " + p.applicationInfo.loadLabel(getPackageManager()).toString());
-                appList.setVersion(p.versionName);
-                long lastUpdatedTimeLong = p.lastUpdateTime;
-                String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
-                appList.setLastUpdateTime(lastUpdateTime);
-                appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
-
-                String appSourceType = getPackageManager().getInstallerPackageName(packageName);
-                String appSource = getAppSource(appSourceType, p);
-                Log.w(TAG, "source: " + appSource);
-                appList.setAppSource(appSource);
-
-                String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
-                if (appRequestedPermissionsArray != null) {
-                    Integer dangerousPermissionsAmount = getDangerousPermissions(appRequestedPermissionsArray).size();
-                    String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
-                    appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
-
-                    ArrayList<String> permissionGroupsList = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
-                    String permissionGroupsString = TextUtils.join("\n", permissionGroupsList);
-                    appList.setPermissionGroups(permissionGroupsString);
-
-                    permissionGroupAmount = Integer.toString(permissionGroupsList.size());
-                    appList.setPermissionGroupsAmount(permissionGroupAmount);
-                } else {
-                    appList.setDangerousPermissionsAmount("0");
-                }
-
-
-                //Connect to the Firebase Realtime Database
-                if (isFirstRun) {
-                    DatabaseReference permissionsReference = FirebaseDatabase
-                            .getInstance()
-                            .getReference(getString(R.string.perm_group_amount));
-                    Log.w(MainActivity.TAG, "permissionsReference: " + permissionsReference);
-                    String id = permissionsReference.push().getKey();
-
-                    permissionsReference.child(id).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            Log.w(MainActivity.TAG, "onDataChange: " + snapshot.getValue());
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Log.w(MainActivity.TAG, "onCancelled: " + databaseError.getMessage());
-                        }
-                    });
-
-
-                    Log.w(MainActivity.TAG, "id: " + id);
-                    if (id != null) {
-                        permissionsReference.child(id).setValue(permissionGroupAmount);
-                        Log.w(MainActivity.TAG, "permissionGroupAmount: " + permissionGroupAmount);
-                    }
-
-
-                } else {
-                    Log.w(MainActivity.TAG, "not first run");
-                }
-
-                long firstInstallTimeLong = p.firstInstallTime;
-                String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
-                // String firstInstallTime = String.valueOf(p.firstInstallTime);
-                appList.setFirstInstallTime(firstInstallTime);
-
-                /* The Last Run Time can be extracted only from UsageStats
-                 * Through the following loop we try to find the package name extracted from
-                 * packs and match it with UsageStats list
-                 * To compare package names from different lists we need to adjust the variables
-                 * in terms of their types.
-                 * @params packageNameForUsageStats - this String value shows the package name
-                 * of UsageStats from the first to the end
-                 *
-                 */
-                for (int k = 0; k < mListUsageStats.size(); k++) {
-
-                    String packageNameForUsageStats = mListUsageStats.get(k).getPackageName();
-                    if (packageNameForUsageStats.equals(packageName)) {
-                        lastTimeExecuted = mListUsageStats.get(k).getLastTimeUsed();
-                        String lastRunTime = currentMilliSecondsToDate(lastTimeExecuted);
-                        appList.setLastRunTime(lastRunTime);
-                        appList.setLastRunTimeInMilliseconds(lastTimeExecuted);
-                        break;
-                    } else {
-                        lastTimeExecuted = 0;
-                        appList.setLastRunTime(getString(R.string.no_available_data));
-                    }
-                }
-
-                appList.setOfflineTrust(getOfflineTrustLevel(lastUpdatedTimeLong, lastTimeExecuted,
-                        appSource, permissionGroupAmount));
-                appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
-                res.add(appList);
-            }
-        }
-        return res;
     }
 
     private String[] getRequestedPermissions(final String appPackage) {
@@ -489,7 +363,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
-
     private String getAppSource(String appSourceType, PackageInfo p) {
         boolean isSystemApp = isSystemPackage(p);
         if (isSystemApp) {
@@ -509,7 +382,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private boolean isSystemPackage(PackageInfo pkgInfo) {
         return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
     }
-
 
     private String currentMilliSecondsToDate(long time) {
 
@@ -536,6 +408,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lvAppWidget);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.overview_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
     @Override
     public void onItemClick(int position) {
         appList = installedApps.get(position);
@@ -548,5 +429,181 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {
             startActivity(intent);
         }
+    }
+
+    private class getInstalledApplicationsTask extends AsyncTask<Void, Integer, List<AppList>> {
+
+        int progressStatus = 0;
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        protected List<AppList> doInBackground(Void... voids) {
+
+
+            /** @param time = current time
+             *  @param delta = initial period
+             *  @param interval = time - delta (it is the time interval which is used by UsageStats
+             *                  for extracting the data)
+             *
+             */
+
+            List<AppList> res = new ArrayList<>();
+            List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.YEAR, -1);
+            long begin = c.getTimeInMillis();
+            long end = System.currentTimeMillis();
+            UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+            mListUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST,
+                    begin, end);
+
+
+            for (int i = 0; i < packs.size(); i++) {
+                progressStatus = progressStatus + packs.size() / 100;
+                progressDialog.setMax(packs.size());
+                publishProgress(progressStatus);
+
+                PackageInfo p = packs.get(i);
+                if ((!isSystemPackage(p))) {
+
+                    AppList appList = new AppList();
+                    String packageName = p.packageName;
+                    appList.setPackageName(packageName);
+                    // Log.w(MainActivity.TAG, "packageName: " + packageName);
+                    appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
+                    // Log.w(MainActivity.TAG, "app name: " + p.applicationInfo.loadLabel(getPackageManager()).toString());
+                    appList.setVersion(p.versionName);
+                    long lastUpdatedTimeLong = p.lastUpdateTime;
+                    String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
+                    appList.setLastUpdateTime(lastUpdateTime);
+                    appList.setLastUpdateTimeInMilliseconds(lastUpdatedTimeLong);
+
+                    String appSourceType = getPackageManager().getInstallerPackageName(packageName);
+                    String appSource = getAppSource(appSourceType, p);
+                    Log.w(TAG, "source: " + appSource);
+                    appList.setAppSource(appSource);
+
+                    String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
+                    if (appRequestedPermissionsArray != null) {
+                        Integer dangerousPermissionsAmount = getDangerousPermissions(appRequestedPermissionsArray).size();
+                        String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
+                        appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
+
+                        ArrayList<String> permissionGroupsList = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
+                        String permissionGroupsString = TextUtils.join("\n", permissionGroupsList);
+                        appList.setPermissionGroups(permissionGroupsString);
+
+                        permissionGroupAmount = Integer.toString(permissionGroupsList.size());
+                        appList.setPermissionGroupsAmount(permissionGroupAmount);
+                    } else {
+                        appList.setDangerousPermissionsAmount("0");
+                    }
+
+
+                    //Connect to the Firebase Realtime Database
+                    if (isFirstRun) {
+                        DatabaseReference permissionsReference = FirebaseDatabase
+                                .getInstance()
+                                .getReference(getString(R.string.perm_group_amount));
+                        Log.w(MainActivity.TAG, "permissionsReference: " + permissionsReference);
+                        String id = permissionsReference.push().getKey();
+
+                        permissionsReference.child(id).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                Log.w(MainActivity.TAG, "onDataChange: " + snapshot.getValue());
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(MainActivity.TAG, "onCancelled: " + databaseError.getMessage());
+                            }
+                        });
+
+
+                        Log.w(MainActivity.TAG, "id: " + id);
+                        if (id != null) {
+                            permissionsReference.child(id).setValue(permissionGroupAmount);
+                            Log.w(MainActivity.TAG, "permissionGroupAmount: " + permissionGroupAmount);
+                        }
+
+
+                    } else {
+                        Log.w(MainActivity.TAG, "not first run");
+                    }
+
+                    long firstInstallTimeLong = p.firstInstallTime;
+                    String firstInstallTime = currentMilliSecondsToDate(firstInstallTimeLong);
+                    // String firstInstallTime = String.valueOf(p.firstInstallTime);
+                    appList.setFirstInstallTime(firstInstallTime);
+
+                    /* The Last Run Time can be extracted only from UsageStats
+                     * Through the following loop we try to find the package name extracted from
+                     * packs and match it with UsageStats list
+                     * To compare package names from different lists we need to adjust the variables
+                     * in terms of their types.
+                     * @params packageNameForUsageStats - this String value shows the package name
+                     * of UsageStats from the first to the end
+                     *
+                     */
+                    for (int k = 0; k < mListUsageStats.size(); k++) {
+
+                        String packageNameForUsageStats = mListUsageStats.get(k).getPackageName();
+                        if (packageNameForUsageStats.equals(packageName)) {
+                            lastTimeExecuted = mListUsageStats.get(k).getLastTimeUsed();
+                            String lastRunTime = currentMilliSecondsToDate(lastTimeExecuted);
+                            appList.setLastRunTime(lastRunTime);
+                            appList.setLastRunTimeInMilliseconds(lastTimeExecuted);
+                            break;
+                        } else {
+                            lastTimeExecuted = 0;
+                            appList.setLastRunTime(getString(R.string.no_available_data));
+                        }
+                    }
+
+                    appList.setOfflineTrust(getOfflineTrustLevel(lastUpdatedTimeLong, lastTimeExecuted,
+                            appSource, permissionGroupAmount));
+                    appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
+                    res.add(appList);
+                }
+            }
+            return res;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            progressDialog.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setProgress(0);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(List<AppList> appLists) {
+            super.onPostExecute(appLists);
+            Log.i(TAG, "installedApps: " + appLists);
+            installedApps.clear();
+            installedApps.addAll(appLists);
+            // installedApps = appLists;
+            //  recyclerView.setAdapter(appRecyclerViewAdapter);
+            appRecyclerViewAdapter.notifyDataSetChanged();
+            progressDialog.setProgress(100);
+            progressDialog.dismiss();
+
+            applicationsWidgetListUnsorted = installedApps;
+            Collections.sort(applicationsWidgetListUnsorted, new Comparator<AppList>() {
+                @Override
+                public int compare(AppList appList1, AppList appList2) {
+                    return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
+                }
+            });
+
+        }
+
     }
 }
