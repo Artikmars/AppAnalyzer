@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,17 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.artamonov.appanalyzer.data.database.AppList;
+import com.artamonov.appanalyzer.contract.AppDetailContract;
+import com.artamonov.appanalyzer.network.GooglePlayParser;
+import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,12 +26,9 @@ import butterknife.ButterKnife;
 import static com.artamonov.appanalyzer.AppDetailActivity.appGPApp;
 import static com.artamonov.appanalyzer.MainActivity.appList;
 
-public class GooglePlayTabFragment extends Fragment {
+public class GooglePlayTabFragment extends Fragment implements AppDetailContract.AppDetailView {
 
-    public static Document document;
     public static Element content;
-    public static Element content2;
-    static ArrayList<AppList> gpList = new ArrayList<>();
     static AppDetailViewModel appDetailFragmentViewModel;
     @BindView(R.id.gp_app_rating_label)
     TextView tvRatingLabel;
@@ -52,8 +42,6 @@ public class GooglePlayTabFragment extends Fragment {
     private TextView tvInstalls;
     private TextView tvPeople;
     private TextView tvUpdated;
-    private TextView tvScore;
-    private AppList parsedAppList;
 
     public static GooglePlayTabFragment newInstance() {
         GooglePlayTabFragment fragment = new GooglePlayTabFragment();
@@ -94,17 +82,16 @@ public class GooglePlayTabFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         appDetailFragmentViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
+        AppDetailPresenter appDetailPresenter = new AppDetailPresenter(this);
 
-        if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+      /*  if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
             ParseTask parseTask = new ParseTask();
             parseTask.execute();
-        }
+        }*/
 
         if (!isNetworkAvailable(getActivity()) && appGPApp != null && appList.getAppSource().equals("Google Play")) {
             populateViewsFromDB();
         }
-
-
     }
 
     @Override
@@ -114,7 +101,13 @@ public class GooglePlayTabFragment extends Fragment {
 
             if (!isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
                 populateViewsFromDB();
+                Log.w(MainActivity.TAG, "setUserVisibleHint: populateViewsFromDB");
                 return;
+            }
+
+            if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+                Log.w(MainActivity.TAG, "setUserVisibleHint: populateViews");
+                populateViews();
             }
         }
     }
@@ -129,28 +122,21 @@ public class GooglePlayTabFragment extends Fragment {
         tvInstalls = view.findViewById(R.id.gp_downloads);
         tvPeople = view.findViewById(R.id.gp_reviewers);
         tvUpdated = view.findViewById(R.id.gp_update_time);
-        tvScore = view.findViewById(R.id.gpScore);
 
         return view;
     }
 
     public void populateViews() {
-        if (parsedAppList != null) {
 
-            Log.w(MainActivity.TAG, " in populateViews: " + parsedAppList.getGpRating());
-            tvRating.setText(parsedAppList.getGpRating());
-            tvInstalls.setText(parsedAppList.getGpInstalls());
-            tvPeople.setText(parsedAppList.getGpPeople());
-            tvUpdated.setText(parsedAppList.getGpUpdated());
+        // AppList parsedAppList = appDetailPresenter.getGPData();
+        Log.w(MainActivity.TAG, " parsedAppList: " + GooglePlayParser.parsedAppList.getGpInstalls());
+        if (GooglePlayParser.parsedAppList != null) {
 
-            double overallTrust = AppDetailActivity.getOverallTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
-                    MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
-                    parsedAppList.getGpInstalls(), parsedAppList.getGpPeople(), parsedAppList.getGpRating(),
-                    parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
-            String overTrust = String.valueOf(overallTrust);
-            tvScore.setText(overTrust);
-
-
+            Log.w(MainActivity.TAG, " in populateViews: " + GooglePlayParser.parsedAppList.getGpRating());
+            tvRating.setText(GooglePlayParser.parsedAppList.getGpRating());
+            tvInstalls.setText(GooglePlayParser.parsedAppList.getGpInstalls());
+            tvPeople.setText(GooglePlayParser.parsedAppList.getGpPeople());
+            tvUpdated.setText(GooglePlayParser.parsedAppList.getGpUpdated());
         } else {
             Log.w(MainActivity.TAG, " in populateViews: list is empty ");
         }
@@ -168,88 +154,18 @@ public class GooglePlayTabFragment extends Fragment {
 
     }
 
-    public class ParseTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPostExecute(Void result) {
-            populateViews();
-            appDetailFragmentViewModel.insert(parsedAppList);
+    @Override
+    public void showProgressDialog() {
 
-        }
+    }
 
-        @Override
-        protected Void doInBackground(Void... strings) {
-            gpList = new ArrayList<>();
-            String gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() + "&hl=en";
-            try {
+    @Override
+    public void dismissProgressDialog() {
 
-                document = Jsoup.connect(gpUrl).get();
-                content = document.select("div:contains(Additional Information)").get(1);
+    }
 
-                String gpParsedString = content.text();
-                String[] ratingArray = gpParsedString.split("Policy ");
-                String[] gpRatingArray = ratingArray[1].split(" ", 2);
-                String gpRating = gpRatingArray[0];
-
-                String ratingPeopleAmount = gpRatingArray[1];
-                String[] gpRatingPeopleAmountArray = ratingPeopleAmount.split(" ", 2);
-                String gpRatingPeopleAmount = gpRatingPeopleAmountArray[0];
-                String[] updatedTime = gpParsedString.split("Updated ");
-                String[] updatedTimeArray = updatedTime[1].split(" ", 5);
-                String gpUpdatedTime = updatedTimeArray[0] + " " + updatedTimeArray[1] + " " + updatedTimeArray[2];
-
-                String[] installsArray = gpParsedString.split("Installs ");
-                String[] gpInstallsArray = installsArray[1].split(" ", 2);
-                String gpInstalls = gpInstallsArray[0];
-
-                if (content2 != null) {
-                    Log.i(MainActivity.TAG, "GP content2: " + content2.text());
-                    Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
-                }
-
-                //Validation
-                try {
-                    Float.parseFloat(gpRating);
-                } catch (NumberFormatException e) {
-                    gpRating = "0";
-                }
-
-                String gpPeopleWithoutCommas = gpRatingPeopleAmount.replace(",", "");
-                try {
-                    Integer.parseInt(gpPeopleWithoutCommas);
-                } catch (NumberFormatException e) {
-                    gpPeopleWithoutCommas = "0";
-                }
-
-                String gpInstallsWithoutCommas = gpInstalls.replace(",", "");
-                String gpInstallsWithoutCommasAndPlus = gpInstallsWithoutCommas.replace("+", "");
-                try {
-                    Integer.parseInt(gpInstallsWithoutCommasAndPlus);
-
-                } catch (NumberFormatException e) {
-                    gpInstallsWithoutCommasAndPlus = "1";
-                }
-
-                try {
-                    new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH).parse(gpUpdatedTime);
-                } catch (ParseException e) {
-                    gpUpdatedTime = null;
-                }
-
-                parsedAppList = new AppList();
-                parsedAppList.setGpRating(gpRating);
-                parsedAppList.setGpPeople(gpPeopleWithoutCommas);
-                parsedAppList.setGpInstalls(gpInstallsWithoutCommasAndPlus);
-                parsedAppList.setGpUpdated(gpUpdatedTime);
-                parsedAppList.setPackageName(MainActivity.appList.getPackageName());
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                Log.i(MainActivity.TAG, "IO Exception");
-            }
-
-            return null;
-        }
-
+    @Override
+    public void populateOverallTrust() {
 
     }
 }

@@ -28,11 +28,13 @@ public class MainDetailTabFragment extends Fragment {
         TextView tvFirstInstallTime = view.findViewById(R.id.first_install_time);
         TextView tvLastRunTime = view.findViewById(R.id.detailed_app_last_run_time);
         TextView tvLastUpdatedTime = view.findViewById(R.id.detailed_app_last_update_time);
+        TextView tvTrustLevel = view.findViewById(R.id.offline_trust);
 
         tvAppSource.setText(MainActivity.appList.getAppSource());
         tvFirstInstallTime.setText(MainActivity.appList.getFirstInstallTime());
         tvLastRunTime.setText(MainActivity.appList.getLastRunTime());
         tvLastUpdatedTime.setText(MainActivity.appList.getLastUpdateTime());
+        tvTrustLevel.setText(String.valueOf(MainActivity.appList.getOfflineTrust()));
 
         return view;
     }

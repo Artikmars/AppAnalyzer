@@ -14,7 +14,7 @@
         android:nextFocusForward="@id/detailed_app_source"
         android:text="@string/detailed_app_origin_source"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/offline_trust_label" />
 
 
     <TextView
@@ -22,13 +22,13 @@
         style="@style/AppDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:nextFocusForward="@id/first_install_time_label"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/first_install_time_label"
         android:text="@string/gp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/detailed_app_source_label"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/offline_trust" />
 
 
     <TextView
@@ -108,6 +108,29 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/first_install_time_label" />
+
+    <TextView
+        android:id="@+id/offline_trust_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/trust_level_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/offline_trust"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/offline_trust_label"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

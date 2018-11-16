@@ -589,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "installedApps: " + appLists);
             installedApps.clear();
             installedApps.addAll(appLists);
-            // installedApps = appLists;
+            // installedApps = appListотs;
             //  recyclerView.setAdapter(appRecyclerViewAdapter);
             appRecyclerViewAdapter.notifyDataSetChanged();
             progressDialog.setProgress(100);

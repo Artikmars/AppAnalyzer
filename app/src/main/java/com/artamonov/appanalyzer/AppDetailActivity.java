@@ -16,7 +16,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.artamonov.appanalyzer.adapter.SectionPageAdapter;
+import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.artamonov.appanalyzer.network.GooglePlayParser;
+import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
+import com.artamonov.appanalyzer.utils.NetworkUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -24,13 +28,14 @@ import com.google.android.gms.ads.MobileAds;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.artamonov.appanalyzer.MainActivity.appList;
 import static com.artamonov.appanalyzer.MainActivity.dateDiff;
 import static com.artamonov.appanalyzer.MainActivity.dateDiffGp;
 import static com.artamonov.appanalyzer.MainActivity.getSourceTrust;
 import static com.artamonov.appanalyzer.MainActivity.mainTrustFormula;
 
 
-public class AppDetailActivity extends AppCompatActivity {
+public class AppDetailActivity extends AppCompatActivity implements AppDetailContract.AppDetailView {
 
     public static AppDetailViewModel appDetailViewModel;
     public static AppList appGPApp;
@@ -43,6 +48,8 @@ public class AppDetailActivity extends AppCompatActivity {
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    // private AppDetailContract.AppDetailPresenter appDetailPresenter;
+    private AppDetailPresenter appDetailPresenter;
 
     public static double getOverallTrustLevel(long updatedTime, long runTime, String appSource, String gpInstalls, String gpPeople,
                                               String gpRating, String gpPublished, String permissionsAmount) {
@@ -88,6 +95,7 @@ public class AppDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_app_analyzer);
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -97,6 +105,7 @@ public class AppDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        appDetailPresenter = new AppDetailPresenter(this);
         ButterKnife.bind(this);
 
 
@@ -144,11 +153,32 @@ public class AppDetailActivity extends AppCompatActivity {
         adapter.setPageTitles(getResources().getString(R.string.third_tab));
         viewPager.setAdapter(adapter);
 
-        tvTrustLevel = findViewById(R.id.trust_level);
-        double offlineTrust = MainActivity.appList.getOfflineTrust();
-        String offlineTrustString = String.valueOf(offlineTrust);
-        tvTrustLevel.setText(offlineTrustString);
 
+        tvTrustLevel = findViewById(R.id.trust_level);
+        tvTrustLevel.setText(String.valueOf(MainActivity.appList.getOfflineTrust()));
+        // double offlineTrust = MainActivity.appList.getOfflineTrust();
+        // String offlineTrustString = String.valueOf(offlineTrust);
+
+
+        if (NetworkUtils.isNetworkAvailable(getApplicationContext()) && appList.getAppSource().equals("Google Play")) {
+            appDetailPresenter.parseGPData();
+        }
 
     }
+
+    @Override
+    public void showProgressDialog() {
+
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+
+    }
+
+    @Override
+    public void populateOverallTrust() {
+        tvTrustLevel.setText(GooglePlayParser.parsedAppList.getOverallTrust());
+    }
+
 }

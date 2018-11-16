@@ -71,9 +71,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="39dp"
         android:layout_marginTop="152dp"
-        android:nextFocusDown="@id/tab_layout"
         android:nextFocusRight="@id/trust_level"
-        android:text="@string/trust_level_label" />
+        android:nextFocusDown="@id/tab_layout"
+        android:text="@string/online_trust_level_label" />
 
     <TextView
         android:id="@+id/trust_level"
