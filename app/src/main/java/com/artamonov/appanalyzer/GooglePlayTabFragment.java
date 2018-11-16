@@ -129,7 +129,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     public void populateViews() {
 
         // AppList parsedAppList = appDetailPresenter.getGPData();
-        Log.w(MainActivity.TAG, " parsedAppList: " + GooglePlayParser.parsedAppList.getGpInstalls());
+        //  Log.w(MainActivity.TAG, " parsedAppList: " + GooglePlayParser.parsedAppList.getGpInstalls());
         if (GooglePlayParser.parsedAppList != null) {
 
             Log.w(MainActivity.TAG, " in populateViews: " + GooglePlayParser.parsedAppList.getGpRating());

@@ -23,6 +23,7 @@ public class SectionPageAdapter extends FragmentPagerAdapter {
     }
 
     public void setPageTitles(String titles) {
+
         fragmentTitlesList.add(titles);
     }
 
@@ -39,7 +40,11 @@ public class SectionPageAdapter extends FragmentPagerAdapter {
             case 0:
                 return MainDetailTabFragment.newInstance();
             case 1:
-                return GooglePlayTabFragment.newInstance();
+                if (fragmentTitlesList.size() == 2) {
+                    return PermissionsTabFragment.newInstance();
+                } else {
+                    return GooglePlayTabFragment.newInstance();
+                }
             case 2:
                 return PermissionsTabFragment.newInstance();
         }

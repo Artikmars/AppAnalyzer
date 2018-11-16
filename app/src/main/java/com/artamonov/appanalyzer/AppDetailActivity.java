@@ -149,7 +149,10 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         tabLayout.setupWithViewPager(viewPager);
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
         adapter.setPageTitles(getResources().getString(R.string.first_tab));
-        adapter.setPageTitles(getResources().getString(R.string.second_tab));
+
+        if (!NetworkUtils.isNetworkAvailable(getApplicationContext()) || appList.getAppSource().equals("Google Play")) {
+            adapter.setPageTitles(getResources().getString(R.string.second_tab));
+        }
         adapter.setPageTitles(getResources().getString(R.string.third_tab));
         viewPager.setAdapter(adapter);
 
