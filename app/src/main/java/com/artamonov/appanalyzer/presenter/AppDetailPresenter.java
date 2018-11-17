@@ -26,6 +26,10 @@ public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter 
     }
 
     @Override
+    public void setOnlineTrust() {
+        view.populateOnlineTrust();
+    }
+    @Override
     public AppList getGPData() {
         return parsedAppList;
     }

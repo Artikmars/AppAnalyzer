@@ -6,8 +6,9 @@ public interface AppDetailContract {
 
     interface AppDetailPresenter {
         void parseGPData();
-
         void setOverallTrust();
+
+        void setOnlineTrust();
 
         AppList getGPData();
     }
@@ -18,5 +19,7 @@ public interface AppDetailContract {
         void dismissProgressDialog();
 
         void populateOverallTrust();
+
+        void populateOnlineTrust();
     }
 }

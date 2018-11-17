@@ -11,24 +11,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_app_rating"
         android:text="@string/gp_rating"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/online_trust_label" />
 
     <TextView
         android:id="@+id/gp_app_rating"
         style="@style/AppDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_reviewers_label"
-        android:layout_marginTop="8dp"
-        android:textStyle="bold"
         android:text="@string/undefined"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/gp_app_rating_label"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/online_trust" />
 
     <TextView
         android:id="@+id/gp_downloads_label"
@@ -48,10 +48,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_update_time_label"
-        android:textStyle="bold"
         android:text="@string/undefined"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/gp_downloads_label"
         app:layout_constraintTop_toBottomOf="@+id/gp_reviewers_label" />
 
@@ -104,5 +104,30 @@
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/gp_update_time_label"
         app:layout_constraintTop_toBottomOf="@+id/gp_downloads" />
+
+    <TextView
+        android:id="@+id/online_trust_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/online_trust_level_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/online_trust"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.07"
+        app:layout_constraintStart_toEndOf="@+id/online_trust_label"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -90,6 +90,21 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
 
     }
 
+    public static double getOnlineTrustLevel(String installs, String peopleVoted, String rating,
+                                             String updated) {
+
+        int gpPeopleInt = Integer.parseInt(peopleVoted);
+        double gpRatingInt = Double.valueOf(rating);
+        int gpInstallsInt = Integer.parseInt(installs);
+        int daysAfterLastUpdateOnGp = dateDiffGp(updated);
+        double updatedGpTrust = mainTrustFormula(14, 7, daysAfterLastUpdateOnGp);
+        double metaData = gpRatingInt * (Math.log(gpPeopleInt) + Math.log(gpInstallsInt));
+        double normalizedMetaData = metaData / 1.6;
+        double onlineTrust = 0.9 * normalizedMetaData + 0.1 * updatedGpTrust;
+        return (double) Math.round(onlineTrust * 100) / 100;
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +197,11 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
     @Override
     public void populateOverallTrust() {
         tvTrustLevel.setText(GooglePlayParser.parsedAppList.getOverallTrust());
+    }
+
+    @Override
+    public void populateOnlineTrust() {
+
     }
 
 }

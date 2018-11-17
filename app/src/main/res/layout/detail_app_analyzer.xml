@@ -73,7 +73,7 @@
         android:layout_marginTop="152dp"
         android:nextFocusRight="@id/trust_level"
         android:nextFocusDown="@id/tab_layout"
-        android:text="@string/online_trust_level_label" />
+        android:text="@string/overall_trust_level_label" />
 
     <TextView
         android:id="@+id/trust_level"

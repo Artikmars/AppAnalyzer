@@ -42,6 +42,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     private TextView tvInstalls;
     private TextView tvPeople;
     private TextView tvUpdated;
+    private TextView tvOnlineTrust;
 
     public static GooglePlayTabFragment newInstance() {
         GooglePlayTabFragment fragment = new GooglePlayTabFragment();
@@ -122,6 +123,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         tvInstalls = view.findViewById(R.id.gp_downloads);
         tvPeople = view.findViewById(R.id.gp_reviewers);
         tvUpdated = view.findViewById(R.id.gp_update_time);
+        tvOnlineTrust = view.findViewById(R.id.online_trust);
 
         return view;
     }
@@ -137,6 +139,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
             tvInstalls.setText(GooglePlayParser.parsedAppList.getGpInstalls());
             tvPeople.setText(GooglePlayParser.parsedAppList.getGpPeople());
             tvUpdated.setText(GooglePlayParser.parsedAppList.getGpUpdated());
+            tvOnlineTrust.setText(GooglePlayParser.parsedAppList.getOnlineTrust());
         } else {
             Log.w(MainActivity.TAG, " in populateViews: list is empty ");
         }
@@ -167,5 +170,10 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     @Override
     public void populateOverallTrust() {
 
+    }
+
+    @Override
+    public void populateOnlineTrust() {
+        tvOnlineTrust.setText(GooglePlayParser.parsedAppList.getOnlineTrust());
     }
 }

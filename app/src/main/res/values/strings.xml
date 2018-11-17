@@ -6,7 +6,8 @@
     <string name="search">Search</string>
     <string name="pref_white_list_label">Source</string>
     <string name="trust_level_label">Offline Trust: </string>
-    <string name="online_trust_level_label">"Overall Trust: "</string>
+    <string name="overall_trust_level_label">"Overall Trust: "</string>
+    <string name="online_trust_level_label">"Online Trust: "</string>
 
     <string name="first_tab">User\'s Data</string>
     <string name="second_tab" translatable="false">Google Play </string>

@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public static List<AppList> installedApps = new ArrayList<>();
     public static AppList appList;
     public static List<AppList> applicationsWidgetListUnsorted;
-    private static Integer appInstalledAmount;
     private static Integer highOfflineScoreApps;
     private static Integer middleOfflineScoreApps;
     private static Integer lowOfflineScoreApps;

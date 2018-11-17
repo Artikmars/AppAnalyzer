@@ -7,8 +7,8 @@
     <string name="search">Поиск</string>
     <string name="pref_white_list_label">Источник</string>
     <string name="source_type">Источник: </string>
-    <string name="trust_level_label">Оффлайн оценка:</string>
-    <string name="online_trust_level_label">Общая оценка:</string>
+    <string name="trust_level_label">Оффлайн Оценка:</string>
+    <string name="online_trust_level_label">Онлайн Оценка:</string>
     <string name="first_tab">"Ваши Данные "</string>
     <string name="third_tab">Разрешения</string>
     <string name="detailed_app_version_label">версия:</string>
@@ -43,10 +43,11 @@
     <string name="application_name">Название</string>
     <string name="overview">Статистика</string>
     <string name="applications_installed_amount">Количество установок:</string>
-    <string name="apps_with_high_score">"Приложения с уровнем доверия больше чем 80: "</string>
-    <string name="apps_with_middle_score">"Приложения с уровнем доверия между 60 и 80: "</string>
-    <string name="apps_with_low_score">"Приложения с уровнем доверия меньше чем 60: "</string>
+    <string name="apps_with_high_score">"С уровнем доверия больше чем 80: "</string>
+    <string name="apps_with_middle_score">"С уровнем доверия между 60 и 80: "</string>
+    <string name="apps_with_low_score">"С уровнем доверия меньше чем 60: "</string>
     <string name="overall_statistics">Общая Статистика</string>
+    <string name="overall_trust_level_label">Общая Оценка</string>
 
 
 </resources>

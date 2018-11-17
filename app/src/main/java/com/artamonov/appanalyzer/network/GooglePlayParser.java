@@ -43,8 +43,14 @@ public class GooglePlayParser extends AsyncTask<Void, Void, Void> {
                 GooglePlayParser.parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
         String overTrust = String.valueOf(overallTrust);
         parsedAppList.setOverallTrust(overTrust);
-
         appDetailPresenter.setOverallTrust();
+
+        double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GooglePlayParser.parsedAppList.getGpInstalls(), GooglePlayParser.parsedAppList.getGpPeople(), GooglePlayParser.parsedAppList.getGpRating(),
+                GooglePlayParser.parsedAppList.getGpUpdated());
+        String onlTrust = String.valueOf(onlineTrust);
+        parsedAppList.setOnlineTrust(onlTrust);
+        appDetailPresenter.setOnlineTrust();
+
 
     }
 

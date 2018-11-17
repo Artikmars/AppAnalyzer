@@ -33,6 +33,16 @@ public class AppList {
     private String appSource;
     private double offlineTrust;
     private String overallTrust;
+
+    private String onlineTrust;
+
+    public String getOnlineTrust() {
+        return onlineTrust;
+    }
+
+    public void setOnlineTrust(String onlineTrust) {
+        this.onlineTrust = onlineTrust;
+    }
     private String dangerousPermissionsAmount;
     private String permissionGroups;
     private String permissionGroupsAmount;
