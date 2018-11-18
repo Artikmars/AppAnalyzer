@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             runTimeTrust = 1;
         }
         double offlineTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.3 * sourceTrust + 0.4 * permissionsTrust) * 100;
+        Log.w(MainActivity.TAG, "OFFLINE: updatedTrust: " + 0.25 * updatedTrust + ", runTimeTrust: "
+                + 0.05 * runTimeTrust + ", sourceTrust: " + 0.3 * sourceTrust + ", permissionsTrust: " + 0.4 * permissionsTrust);
         return (double) Math.round(offlineTrust * 100) / 100;
 
     }

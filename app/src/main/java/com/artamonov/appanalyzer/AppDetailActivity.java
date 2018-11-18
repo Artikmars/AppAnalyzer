@@ -81,11 +81,16 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         double metaData = gpRatingInt * (Math.log(gpPeopleInt) + Math.log(gpInstallsInt));
         double normalizedMetaData = metaData / 160;
 
-        Log.w(MainActivity.TAG, "updated time: " + 20 * updatedTrust + ", runTime: "
+        Log.w(MainActivity.TAG, "OVERALL: updated time: " + 20 * updatedTrust + ", runTime: "
                 + 5 * runTimeTrust + ", normalizedMetaData: " + 20 * normalizedMetaData
-                + ", permissions: " + 30 * permissionsTrust + ", source: " + 20 * sourceTrust);
-        double overallTrust = (0.2 * updatedTrust + 0.05 * runTimeTrust + 0.2 * normalizedMetaData +
-                0.05 * updatedGpTrust + 0.2 * sourceTrust + 0.3 * permissionsTrust) * 100;
+                + "updatedGpTrust: " + 5 * updatedGpTrust + ", permissions: " + 30 * permissionsTrust + ", source: " + 20 * sourceTrust);
+        // double overallTrust = (0.2 * updatedTrust + 0.05 * runTimeTrust + 0.2 * normalizedMetaData +
+        //         0.05 * updatedGpTrust + 0.2 * sourceTrust + 0.3 * permissionsTrust) * 100;
+        double overallTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.4 * sourceTrust + 0.3 * permissionsTrust) * 75 +
+                (0.9 * normalizedMetaData +
+                        0.1 * updatedGpTrust) * 25;
+        Log.w(MainActivity.TAG, "Overall trust: " + overallTrust);
+        Log.w(MainActivity.TAG, "Overall trust rounded: " + (double) Math.round(overallTrust * 100) / 100);
         return (double) Math.round(overallTrust * 100) / 100;
 
     }
@@ -101,6 +106,10 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         double metaData = gpRatingInt * (Math.log(gpPeopleInt) + Math.log(gpInstallsInt));
         double normalizedMetaData = metaData / 1.6;
         double onlineTrust = 0.9 * normalizedMetaData + 0.1 * updatedGpTrust;
+        Log.w(MainActivity.TAG, "ONLINE: normalizedMetaData time: " + 0.9 * normalizedMetaData + ", updatedGpTrust: "
+                + 0.1 * updatedGpTrust);
+        Log.w(MainActivity.TAG, "Online trust: " + onlineTrust);
+        Log.w(MainActivity.TAG, "Online trust rounded: " + (double) Math.round(onlineTrust * 100) / 100);
         return (double) Math.round(onlineTrust * 100) / 100;
 
     }
