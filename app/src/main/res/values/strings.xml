@@ -4,6 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="current_version">Current Version: </string>
     <string name="search">Search</string>
+    <string name="search_on_GP">Search on Google Play</string>
     <string name="pref_white_list_label">Source</string>
     <string name="trust_level_label">Offline Trust: </string>
     <string name="overall_trust_level_label">"Overall Trust: "</string>

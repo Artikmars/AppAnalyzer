@@ -4,4 +4,8 @@
     <item
         android:id="@+id/overview"
         android:title="@string/overview" />
+
+    <item
+        android:id="@+id/search_gp"
+        android:title="@string/search_on_GP" />
 </menu>

@@ -2,8 +2,6 @@ package com.artamonov.appanalyzer;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,16 +13,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.artamonov.appanalyzer.contract.AppDetailContract;
-import com.artamonov.appanalyzer.network.GooglePlayParser;
+import com.artamonov.appanalyzer.network.GPDetailPageParser;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
 
 import org.jsoup.nodes.Element;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.artamonov.appanalyzer.AppDetailActivity.appGPApp;
-import static com.artamonov.appanalyzer.MainActivity.appList;
 
 public class GooglePlayTabFragment extends Fragment implements AppDetailContract.AppDetailView {
 
@@ -50,13 +49,6 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         fragment.setArguments(args);
         Log.w(MainActivity.TAG, "newInstance");
         return fragment;
-    }
-
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
     }
 
     @Override
@@ -90,9 +82,12 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
             parseTask.execute();
         }*/
 
+
+
+/*
         if (!isNetworkAvailable(getActivity()) && appGPApp != null && appList.getAppSource().equals("Google Play")) {
             populateViewsFromDB();
-        }
+        }*/
     }
 
     @Override
@@ -100,17 +95,14 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
 
-            if (!isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+          /*  if (!isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
                 populateViewsFromDB();
                 Log.w(MainActivity.TAG, "setUserVisibleHint: populateViewsFromDB");
                 return;
-            }
-
-            if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
-                Log.w(MainActivity.TAG, "setUserVisibleHint: populateViews");
+            }*/
                 populateViews();
             }
-        }
+
     }
 
     @Nullable
@@ -131,15 +123,15 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     public void populateViews() {
 
         // AppList parsedAppList = appDetailPresenter.getGPData();
-        //  Log.w(MainActivity.TAG, " parsedAppList: " + GooglePlayParser.parsedAppList.getGpInstalls());
-        if (GooglePlayParser.parsedAppList != null) {
+        //  Log.w(MainActivity.TAG, " parsedAppList: " + GPDetailPageParser.parsedAppList.getGpInstalls());
+        if (GPDetailPageParser.parsedAppList != null) {
 
-            Log.w(MainActivity.TAG, " in populateViews: " + GooglePlayParser.parsedAppList.getGpRating());
-            tvRating.setText(GooglePlayParser.parsedAppList.getGpRating());
-            tvInstalls.setText(GooglePlayParser.parsedAppList.getGpInstalls());
-            tvPeople.setText(GooglePlayParser.parsedAppList.getGpPeople());
-            tvUpdated.setText(GooglePlayParser.parsedAppList.getGpUpdated());
-            tvOnlineTrust.setText(GooglePlayParser.parsedAppList.getOnlineTrust());
+            Log.w(MainActivity.TAG, " in populateViews: " + GPDetailPageParser.parsedAppList.getGpRating());
+            tvRating.setText(GPDetailPageParser.parsedAppList.getGpRating());
+            tvInstalls.setText(GPDetailPageParser.parsedAppList.getGpInstalls());
+            tvPeople.setText(GPDetailPageParser.parsedAppList.getGpPeople());
+            tvUpdated.setText(GPDetailPageParser.parsedAppList.getGpUpdated());
+            tvOnlineTrust.setText(GPDetailPageParser.parsedAppList.getOnlineTrust());
         } else {
             Log.w(MainActivity.TAG, " in populateViews: list is empty ");
         }
@@ -173,7 +165,14 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     }
 
     @Override
+    public void setSearchAppsAdapter(ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {
+
+    }
+
+    @Override
     public void populateOnlineTrust() {
-        tvOnlineTrust.setText(GooglePlayParser.parsedAppList.getOnlineTrust());
+        populateViews();
+        Log.i(MainActivity.TAG, "in populateOnlineTrust: " + GPDetailPageParser.parsedAppList.getOnlineTrust());
+        tvOnlineTrust.setText(GPDetailPageParser.parsedAppList.getOnlineTrust());
     }
 }

@@ -2,7 +2,10 @@ package com.artamonov.appanalyzer.presenter;
 
 import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.data.database.AppList;
-import com.artamonov.appanalyzer.network.GooglePlayParser;
+import com.artamonov.appanalyzer.network.GPDetailPageParser;
+import com.artamonov.appanalyzer.network.GPSearchParser;
+
+import java.util.ArrayList;
 
 public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter {
 
@@ -15,9 +18,21 @@ public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter 
 
     @Override
     public void parseGPData() {
-        GooglePlayParser googlePlayParser = new GooglePlayParser(this);
+        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this);
         googlePlayParser.execute();
 
+    }
+
+    @Override
+    public void parseGPSearch(String appName) {
+        GPSearchParser gpSearchParser = new GPSearchParser(this, appName);
+        gpSearchParser.execute();
+
+    }
+
+    @Override
+    public void setSearchAppsAdapter(ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {
+        view.setSearchAppsAdapter(arrayAppNames, arrayLinks);
     }
 
     @Override
@@ -32,5 +47,10 @@ public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter 
     @Override
     public AppList getGPData() {
         return parsedAppList;
+    }
+
+    public void parseGPData(String link) {
+        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this, link);
+        googlePlayParser.execute();
     }
 }

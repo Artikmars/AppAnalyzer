@@ -18,12 +18,14 @@ import android.widget.TextView;
 import com.artamonov.appanalyzer.adapter.SectionPageAdapter;
 import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.data.database.AppList;
-import com.artamonov.appanalyzer.network.GooglePlayParser;
+import com.artamonov.appanalyzer.network.GPDetailPageParser;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
 import com.artamonov.appanalyzer.utils.NetworkUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -133,26 +135,12 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         ButterKnife.bind(this);
 
 
-        appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
-        appDetailViewModel.getGpData(MainActivity.appList.getPackageName()).observe(this, new Observer<AppList>() {
-            @Override
-            public void onChanged(@Nullable final AppList logList) {
-                // Update the cached copy of the applications in the adapter.
-                if (logList != null) {
-                    appGPApp = logList;
-                } else {
-                    appGPApp = null;
-                }
-
-            }
-        });
-
-
         // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
         MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
         AdView mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
 
         Bundle extras = getIntent().getExtras();
         byte[] byteLogo = extras.getByteArray(getString(R.string.item_logo));
@@ -191,6 +179,22 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
             appDetailPresenter.parseGPData();
         }
 
+
+        appDetailViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
+        appDetailViewModel.getGpData(MainActivity.appList.getPackageName()).observe(this, new Observer<AppList>() {
+            @Override
+            public void onChanged(@Nullable final AppList logList) {
+                // Update the cached copy of the applications in the adapter.
+                if (logList != null) {
+                    appGPApp = logList;
+                } else {
+                    appGPApp = null;
+                }
+
+            }
+        });
+
+
     }
 
     @Override
@@ -205,7 +209,12 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
 
     @Override
     public void populateOverallTrust() {
-        tvTrustLevel.setText(GooglePlayParser.parsedAppList.getOverallTrust());
+        tvTrustLevel.setText(GPDetailPageParser.parsedAppList.getOverallTrust());
+    }
+
+    @Override
+    public void setSearchAppsAdapter(ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {
+
     }
 
     @Override

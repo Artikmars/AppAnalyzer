@@ -21,43 +21,57 @@ import java.util.Locale;
 import static com.artamonov.appanalyzer.MainActivity.appList;
 
 
-public class GooglePlayParser extends AsyncTask<Void, Void, Void> {
+public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
     public static AppList parsedAppList;
     public static Element content;
     static ArrayList<AppList> gpList = new ArrayList<>();
     private static Document document;
     private static Element content2;
+    private String appLink;
     // private AppDetailContract.AppDetailPresenter appDetailPresenter;
     private AppDetailPresenter appDetailPresenter;
+    private String gpUrl;
 
-    public GooglePlayParser(AppDetailPresenter appDetailPresenter) {
+    public GPDetailPageParser(AppDetailPresenter appDetailPresenter) {
         this.appDetailPresenter = appDetailPresenter;
+    }
+
+    public GPDetailPageParser(AppDetailPresenter appDetailPresenter, String link) {
+        this.appDetailPresenter = appDetailPresenter;
+        this.appLink = link;
     }
 
     @Override
     protected void onPostExecute(Void result) {
 
-        double overallTrust = AppDetailActivity.getOverallTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
-                MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
-                GooglePlayParser.parsedAppList.getGpInstalls(), GooglePlayParser.parsedAppList.getGpPeople(), GooglePlayParser.parsedAppList.getGpRating(),
-                GooglePlayParser.parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
-        String overTrust = String.valueOf(overallTrust);
-        parsedAppList.setOverallTrust(overTrust);
-        appDetailPresenter.setOverallTrust();
-
-        double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GooglePlayParser.parsedAppList.getGpInstalls(), GooglePlayParser.parsedAppList.getGpPeople(), GooglePlayParser.parsedAppList.getGpRating(),
-                GooglePlayParser.parsedAppList.getGpUpdated());
+        double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
+                GPDetailPageParser.parsedAppList.getGpUpdated());
         String onlTrust = String.valueOf(onlineTrust);
         parsedAppList.setOnlineTrust(onlTrust);
-        appDetailPresenter.setOnlineTrust();
+        Log.i(MainActivity.TAG, "onPost Execute, onlineTrust: " + onlTrust);
+        appDetailPresenter.setOverallTrust();
 
-
+        if (appLink == null) {
+            double overallTrust = AppDetailActivity.getOverallTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
+                    MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
+                    GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
+                    GPDetailPageParser.parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
+            String overTrust = String.valueOf(overallTrust);
+            parsedAppList.setOverallTrust(overTrust);
+            appDetailPresenter.setOverallTrust();
+        }
     }
 
     @Override
     protected Void doInBackground(Void... strings) {
         gpList = new ArrayList<>();
-        String gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() + "&hl=en";
+
+        if (appLink != null) {
+            gpUrl = appLink + "&hl=en";
+        } else {
+            gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() + "&hl=en";
+        }
+        Log.i(MainActivity.TAG, "gpUrl: " + gpUrl);
         try {
 
             document = Jsoup.connect(gpUrl).get();
@@ -118,7 +132,10 @@ public class GooglePlayParser extends AsyncTask<Void, Void, Void> {
             parsedAppList.setGpPeople(gpPeopleWithoutCommas);
             parsedAppList.setGpInstalls(gpInstallsWithoutCommasAndPlus);
             parsedAppList.setGpUpdated(gpUpdatedTime);
-            parsedAppList.setPackageName(MainActivity.appList.getPackageName());
+
+            if (appLink == null) {
+                parsedAppList.setPackageName(MainActivity.appList.getPackageName());
+            }
 
             Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpRating());
             Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpUpdated());

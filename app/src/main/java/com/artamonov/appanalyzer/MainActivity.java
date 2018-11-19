@@ -227,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Retrieving the list of installed applications ...");
         progressDialog.setTitle("In Progress");
+        progressDialog.setCancelable(false);
         // progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 
@@ -296,19 +297,29 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.overview) {
-            getHighOfflineScoreApps();
-            getMiddleOfflineScoreApps();
-            getLowOfflineScoreApps();
-            Intent intent = new Intent(this, OverviewActivity.class);
-            Log.i(TAG, "applications_amount: " + installedApps.size() + " high_offline_score_apps: " + highOfflineScoreApps
-                    + "middle_offline_score_apps: " + middleOfflineScoreApps);
-            intent.putExtra("applications_amount", installedApps.size());
-            intent.putExtra("high_offline_score_apps", highOfflineScoreApps);
-            intent.putExtra("middle_offline_score_apps", middleOfflineScoreApps);
-            intent.putExtra("low_offline_score_apps", lowOfflineScoreApps);
-            startActivity(intent);
+        switch (id) {
+            case R.id.overview:
+                Log.i(TAG, "IN OVERVIEW MENU");
+                getHighOfflineScoreApps();
+                getMiddleOfflineScoreApps();
+                getLowOfflineScoreApps();
+                Intent intent = new Intent(this, OverviewActivity.class);
+                Log.i(TAG, "applications_amount: " + installedApps.size() + " high_offline_score_apps: " + highOfflineScoreApps
+                        + "middle_offline_score_apps: " + middleOfflineScoreApps);
+                intent.putExtra("applications_amount", installedApps.size());
+                intent.putExtra("high_offline_score_apps", highOfflineScoreApps);
+                intent.putExtra("middle_offline_score_apps", middleOfflineScoreApps);
+                intent.putExtra("low_offline_score_apps", lowOfflineScoreApps);
+                startActivity(intent);
+                break;
+
+            case R.id.search_gp:
+                Log.i(TAG, "IN SEARCH_GP MENU");
+                Intent intent_search = new Intent(this, SearchActivity.class);
+                startActivity(intent_search);
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -413,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.overview_menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

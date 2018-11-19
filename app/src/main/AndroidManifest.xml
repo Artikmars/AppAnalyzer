@@ -36,6 +36,20 @@
 
         </activity>
 
+        <activity
+            android:name=".SearchActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+
+        </activity>
+
+        <activity
+            android:name=".SearchDetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".SearchActivity">
+
+        </activity>
+
         <service
             android:name=".widget.ApplicationsWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true">
+
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+
+    <TextView
+        android:id="@+id/search_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:nextFocusDown="@string/detailed_app_version_label"
+        android:text="@string/hello_world"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/detailed_app_version_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/search_name"
+        android:layout_alignBottom="@+id/detailed_app_version"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="12dp"
+        android:nextFocusRight="@string/detailed_app_version"
+        android:nextFocusDown="@string/trust_level_label"
+        android:text="@string/detailed_app_version_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_name" />
+
+
+    <TextView
+        android:id="@+id/search_app_version"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@id/detailed_app_version_label"
+        android:nextFocusLeft="@string/detailed_app_version_label"
+        android:nextFocusDown="@string/trust_level_label"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/detailed_app_version_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_name" />
+
+
+    <TextView
+        android:id="@+id/trust_level_label"
+        style="@style/AppDescriptionBig"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusRight="@id/trust_level"
+        android:nextFocusDown="@id/tab_layout"
+        android:text="@string/overall_trust_level_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailed_app_version_label" />
+
+    <TextView
+        android:id="@+id/trust_level"
+        style="@style/AppDescriptionBig"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/trust_level_label"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@id/trust_level_label"
+        android:nextFocusLeft="@id/trust_level_label"
+        android:nextFocusDown="@id/tab_layout"
+        android:text="@string/undefined"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/trust_level_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_app_version" />
+
+
+    <TextView
+        android:id="@+id/search_app_rating_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_app_rating"
+        android:text="@string/gp_rating"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trust_level_label" />
+
+    <TextView
+        android:id="@+id/search_app_rating"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_reviewers_label"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/search_app_rating_label"
+        app:layout_constraintTop_toBottomOf="@+id/trust_level_label" />
+
+    <TextView
+        android:id="@+id/search_downloads_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_downloads"
+        android:text="@string/gp_installs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_reviewers_label" />
+
+    <TextView
+        android:id="@+id/search_downloads"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_update_time_label"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/search_downloads_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_reviewers" />
+
+    <TextView
+        android:id="@+id/search_reviewers_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_reviewers"
+        android:text="@string/gp_people"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_app_rating_label" />
+
+    <TextView
+        android:id="@+id/search_reviewers"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_downloads_label"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/search_reviewers_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_app_rating" />
+
+    <TextView
+        android:id="@+id/search_update_time_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:nextFocusForward="@id/gp_update_time"
+        android:text="@string/gp_update_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_downloads_label" />
+
+    <TextView
+        android:id="@+id/search_update_time"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/search_update_time_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_downloads" />
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:nextFocusUp="@id/view_pager"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+

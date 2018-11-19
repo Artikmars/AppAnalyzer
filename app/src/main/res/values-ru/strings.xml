@@ -48,6 +48,7 @@
     <string name="apps_with_low_score">"С уровнем доверия меньше чем 60: "</string>
     <string name="overall_statistics">Общая Статистика</string>
     <string name="overall_trust_level_label">Общая Оценка</string>
+    <string name="search_on_GP">Найти в Google Play</string>
 
 
 </resources>
