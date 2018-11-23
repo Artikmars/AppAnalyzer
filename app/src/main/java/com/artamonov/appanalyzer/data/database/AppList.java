@@ -23,6 +23,16 @@ public class AppList {
     private String gpRating;
     private String gpInstalls;
     private String gpPeople;
+
+    private String gpCategory;
+
+    public String getGpCategory() {
+        return gpCategory;
+    }
+
+    public void setGpCategory(String gpCategory) {
+        this.gpCategory = gpCategory;
+    }
     private String gpUpdated;
     private String gpUpdatedInMilliseconds;
 

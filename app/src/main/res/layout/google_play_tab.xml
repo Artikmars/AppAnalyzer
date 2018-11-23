@@ -15,20 +15,20 @@
         android:nextFocusForward="@id/gp_app_rating"
         android:text="@string/gp_rating"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/online_trust_label" />
+        app:layout_constraintTop_toBottomOf="@+id/gp_category_label" />
 
     <TextView
         android:id="@+id/gp_app_rating"
         style="@style/AppDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_reviewers_label"
         android:text="@string/undefined"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/gp_app_rating_label"
-        app:layout_constraintTop_toBottomOf="@+id/online_trust" />
+        app:layout_constraintTop_toBottomOf="@+id/gp_category" />
 
     <TextView
         android:id="@+id/gp_downloads_label"
@@ -47,7 +47,7 @@
         style="@style/AppDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_update_time_label"
         android:text="@string/undefined"
@@ -72,10 +72,10 @@
         style="@style/AppDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:nextFocusForward="@id/gp_downloads_label"
         android:text="@string/undefined"
-        android:layout_marginTop="12dp"
         android:textStyle="bold"
 
         app:layout_constraintStart_toEndOf="@+id/gp_reviewers_label"
@@ -119,9 +119,9 @@
     <TextView
         android:id="@+id/online_trust"
         style="@style/AppDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="92dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:text="@string/undefined"
         android:textStyle="bold"
@@ -129,5 +129,28 @@
         app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintStart_toEndOf="@+id/online_trust_label"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gp_category_label"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/gp_category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/online_trust_label" />
+
+    <TextView
+        android:id="@+id/gp_category"
+        style="@style/AppDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/gp_category_label"
+        app:layout_constraintTop_toBottomOf="@+id/online_trust" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,7 @@
 package com.artamonov.appanalyzer.presenter;
 
+import android.content.Context;
+
 import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.data.database.AppList;
 import com.artamonov.appanalyzer.network.GPDetailPageParser;
@@ -17,8 +19,8 @@ public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter 
     }
 
     @Override
-    public void parseGPData() {
-        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this);
+    public void parseGPData(Context context) {
+        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this, context);
         googlePlayParser.execute();
 
     }
@@ -49,8 +51,8 @@ public class AppDetailPresenter implements AppDetailContract.AppDetailPresenter 
         return parsedAppList;
     }
 
-    public void parseGPData(String link) {
-        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this, link);
+    public void parseGPData(String link, Context context) {
+        GPDetailPageParser googlePlayParser = new GPDetailPageParser(this, link, context);
         googlePlayParser.execute();
     }
 }

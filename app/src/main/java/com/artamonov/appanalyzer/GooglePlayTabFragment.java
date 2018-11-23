@@ -37,6 +37,8 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     TextView tvPeopleLabel;
     @BindView(R.id.gp_update_time_label)
     TextView tvUpdatedLabel;
+
+    private TextView tvCategory;
     private TextView tvRating;
     private TextView tvInstalls;
     private TextView tvPeople;
@@ -111,6 +113,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         Log.w(MainActivity.TAG, "onCreateView");
         View view = inflater.inflate(R.layout.google_play_tab, container, false);
         ButterKnife.bind(view);
+        tvCategory = view.findViewById(R.id.gp_category);
         tvRating = view.findViewById(R.id.gp_app_rating);
         tvInstalls = view.findViewById(R.id.gp_downloads);
         tvPeople = view.findViewById(R.id.gp_reviewers);
@@ -127,6 +130,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         if (GPDetailPageParser.parsedAppList != null) {
 
             Log.w(MainActivity.TAG, " in populateViews: " + GPDetailPageParser.parsedAppList.getGpRating());
+            tvCategory.setText(GPDetailPageParser.parsedAppList.getGpCategory());
             tvRating.setText(GPDetailPageParser.parsedAppList.getGpRating());
             tvInstalls.setText(GPDetailPageParser.parsedAppList.getGpInstalls());
             tvPeople.setText(GPDetailPageParser.parsedAppList.getGpPeople());
@@ -140,7 +144,7 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     public void populateViewsFromDB() {
 
         if (appGPApp != null) {
-
+            tvCategory.setText(appGPApp.getGpCategory());
             tvRating.setText(appGPApp.getGpRating());
             tvInstalls.setText(appGPApp.getGpInstalls());
             tvPeople.setText(appGPApp.getGpPeople());

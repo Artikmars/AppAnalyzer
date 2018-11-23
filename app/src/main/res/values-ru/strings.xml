@@ -32,9 +32,9 @@
     <string name="dangerous_permissions">Опасные разрешения:</string>
     <string name="permission_groups">Группы разрешений:</string>
     <string name="gp_rating">Рейтинг:</string>
-    <string name="gp_people">Люди:</string>
-    <string name="gp_installs">Установки:</string>
-    <string name="gp_update_time">Обновлено:</string>
+    <string name="gp_people">Проголосовавшие:</string>
+    <string name="gp_installs">Количество установок:</string>
+    <string name="gp_update_time">Последнее обновление:</string>
     <string name="app_widget_list">Список приложений виджета</string>
     <string name="item_position">Позиция</string>
     <string name="item_logo">Лого</string>
@@ -49,6 +49,7 @@
     <string name="overall_statistics">Общая Статистика</string>
     <string name="overall_trust_level_label">Общая Оценка</string>
     <string name="search_on_GP">Найти в Google Play</string>
+    <string name="gp_category">Категория:</string>
 
 
 </resources>

@@ -102,6 +102,7 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
                     set.add(item);
                 }
 
+
                 //   Log.w(MainActivity.TAG, "links: " + links);
 
                 // Log.w(MainActivity.TAG, "links.text(): " + links2);

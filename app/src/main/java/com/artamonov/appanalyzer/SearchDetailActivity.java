@@ -53,7 +53,7 @@ public class SearchDetailActivity extends AppCompatActivity implements AppDetail
         String link = intent.getStringExtra("appLink");
         Log.w(MainActivity.TAG, "IN SEARCH DETAIL: link: " + link);
         if (NetworkUtils.isNetworkAvailable(getApplicationContext())) {
-            appDetailPresenter.parseGPData(link);
+            appDetailPresenter.parseGPData(link, getApplicationContext());
             Log.w(MainActivity.TAG, "IN SEARCH DETAIL: parse:");
         }
 

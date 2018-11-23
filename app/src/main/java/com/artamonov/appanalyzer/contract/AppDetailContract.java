@@ -1,5 +1,7 @@
 package com.artamonov.appanalyzer.contract;
 
+import android.content.Context;
+
 import com.artamonov.appanalyzer.data.database.AppList;
 
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.ArrayList;
 public interface AppDetailContract {
 
     interface AppDetailPresenter {
-        void parseGPData();
+        void parseGPData(Context context);
 
         void parseGPSearch(String appName);
 

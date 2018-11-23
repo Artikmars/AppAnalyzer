@@ -38,10 +38,19 @@
     <string name="dangerous_permissions">Dangerous Permissions: </string>
     <string name="permission_groups">Permission Groups: </string>
 
+
+    <string name="gp_updated_html" translatable="false">Updated</string>
+    <string name="gp_installs_html" translatable="false">Installs</string>
+    <string name="gp_policy_html" translatable="false">Policy</string>
+    <string name="gp_additional_info" translatable="false">div:contains(Additional Information)</string>
+    <string name="gp_link" translatable="false">https://play.google.com/store/apps/details?id=%1$s&amp;hl=en </string>
+    <string name="gp_link_prefix" translatable="false">&amp;hl=en</string>
+
     <string name="gp_rating">Rating: </string>
     <string name="gp_people">People: </string>
     <string name="gp_installs">Installs: </string>
     <string name="gp_update_time">Updated: </string>
+    <string name="gp_category">Category: </string>
 
     <string name="app_widget_list">App Widget List</string>
 

@@ -176,7 +176,7 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
 
 
         if (NetworkUtils.isNetworkAvailable(getApplicationContext()) && appList.getAppSource().equals("Google Play")) {
-            appDetailPresenter.parseGPData();
+            appDetailPresenter.parseGPData(getApplicationContext());
         }
 
 
