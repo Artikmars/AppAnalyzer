@@ -22,11 +22,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void setupSharedPreferences() {
 
-        SharedPreferences sharedPreferences = android.support.v7.preference.PreferenceManager
+        SharedPreferences sharedPreferences = androidx.preference.PreferenceManager
                 .getDefaultSharedPreferences(this);
         loadSourceFromPreferences(sharedPreferences);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
