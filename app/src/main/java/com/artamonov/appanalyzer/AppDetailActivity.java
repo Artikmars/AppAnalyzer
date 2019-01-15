@@ -1,16 +1,8 @@
 package com.artamonov.appanalyzer;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.tabs.TabLayout;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,12 +13,17 @@ import com.artamonov.appanalyzer.data.database.AppList;
 import com.artamonov.appanalyzer.network.GPDetailPageParser;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
 import com.artamonov.appanalyzer.utils.NetworkUtils;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,6 +36,7 @@ import static com.artamonov.appanalyzer.MainActivity.mainTrustFormula;
 
 public class AppDetailActivity extends AppCompatActivity implements AppDetailContract.AppDetailView {
 
+    private static final String TAG = "myLogs";
     public static AppDetailViewModel appDetailViewModel;
     public static AppList appGPApp;
     @BindView(R.id.detailed_app_name)
@@ -120,7 +118,7 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_app_analyzer);
-
+        Log.i(TAG, "ApPDetailActivity: onCreate");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -134,12 +132,11 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         appDetailPresenter = new AppDetailPresenter(this);
         ButterKnife.bind(this);
 
-
         // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        //MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        //AdView mAdView = findViewById(R.id.adView);
+        // AdRequest adRequest = new AdRequest.Builder().build();
+        // mAdView.loadAd(adRequest);
 
 
         Bundle extras = getIntent().getExtras();
@@ -167,7 +164,8 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         }
         adapter.setPageTitles(getResources().getString(R.string.third_tab));
         viewPager.setAdapter(adapter);
-
+        Log.i(TAG, "ApPDetailActivity: adapter " + adapter);
+        Log.i(TAG, "ApPDetailActivity: adapter " + viewPager);
 
         tvTrustLevel = findViewById(R.id.trust_level);
         tvTrustLevel.setText(String.valueOf(MainActivity.appList.getOfflineTrust()));

@@ -51,11 +51,11 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void result) {
 
-        double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
-                GPDetailPageParser.parsedAppList.getGpUpdated());
-        String onlTrust = String.valueOf(onlineTrust);
-        parsedAppList.setOnlineTrust(onlTrust);
-        Log.i(MainActivity.TAG, "onPost Execute, onlineTrust: " + onlTrust);
+        // double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
+        //        GPDetailPageParser.parsedAppList.getGpUpdated());
+        //  String onlTrust = String.valueOf(onlineTrust);
+        // parsedAppList.setOnlineTrust(onlTrust);
+        //  Log.i(MainActivity.TAG, "onPost Execute, onlineTrust: " + onlTrust);
         appDetailPresenter.setOverallTrust();
 
         if (appLink == null) {

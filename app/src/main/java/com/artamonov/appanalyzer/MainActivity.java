@@ -1,6 +1,5 @@
 package com.artamonov.appanalyzer;
 
-import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -22,11 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -56,6 +50,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -433,14 +432,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void onItemClick(int position) {
         appList = installedApps.get(position);
         Intent intent = new Intent(this, AppDetailActivity.class);
+        Log.i(TAG, "onItemClick: intent:" + intent);
         intent.putExtra(getString(R.string.item_position), position);
         intent.putExtra(getString(R.string.item_logo), drawableToByte(appList.getIcon()));
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        startActivity(intent);
+        Log.i(TAG, "onItemClick: startActivity(intent)");
+       /* if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {
             startActivity(intent);
-        }
+        }*/
     }
 
     private class getInstalledApplicationsTask extends AsyncTask<Void, Integer, List<AppList>> {
