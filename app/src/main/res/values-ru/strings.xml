@@ -52,4 +52,7 @@
     <string name="gp_category">Категория:</string>
 
 
+    <string name="phone">Телефон</string>
+    <string name="applications">Приложения</string>
+
 </resources>
