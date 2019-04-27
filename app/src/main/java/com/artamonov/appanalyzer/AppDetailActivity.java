@@ -146,7 +146,7 @@ public class AppDetailActivity extends AppCompatActivity implements AppDetailCon
         ImageView ivLogo = findViewById(R.id.detailed_app_icon);
         tvAppName.setText(MainActivity.appList.getName());
 
-        if (MainActivity.appList.getVersion().length() >= 15) {
+        if (appList.getVersion() != null && MainActivity.appList.getVersion().length() >= 15) {
             String shortenedVersion = MainActivity.appList.getVersion().substring(0, 15);
             tvAppVersion.setText(shortenedVersion);
         } else {
