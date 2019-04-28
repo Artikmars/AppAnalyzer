@@ -1,40 +1,40 @@
 package com.artamonov.appanalyzer;
 
-import androidx.lifecycle.ViewModelProviders;
+import static com.artamonov.appanalyzer.AppDetailActivity.appGPApp;
+
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.network.GPDetailPageParser;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
-
-import org.jsoup.nodes.Element;
-
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import static com.artamonov.appanalyzer.AppDetailActivity.appGPApp;
+import org.jsoup.nodes.Element;
 
 public class GooglePlayTabFragment extends Fragment implements AppDetailContract.AppDetailView {
 
     public static Element content;
     static AppDetailViewModel appDetailFragmentViewModel;
+
     @BindView(R.id.gp_app_rating_label)
     TextView tvRatingLabel;
+
     @BindView(R.id.gp_downloads_label)
     TextView tvInstallsLabel;
+
     @BindView(R.id.gp_reviewers_label)
     TextView tvPeopleLabel;
+
     @BindView(R.id.gp_update_time_label)
     TextView tvUpdatedLabel;
 
@@ -79,14 +79,12 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         appDetailFragmentViewModel = ViewModelProviders.of(this).get(AppDetailViewModel.class);
         AppDetailPresenter appDetailPresenter = new AppDetailPresenter(this);
 
-      /*  if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+        /*  if (isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
             ParseTask parseTask = new ParseTask();
             parseTask.execute();
         }*/
 
-
-
-/*
+        /*
         if (!isNetworkAvailable(getActivity()) && appGPApp != null && appList.getAppSource().equals("Google Play")) {
             populateViewsFromDB();
         }*/
@@ -97,19 +95,21 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
 
-          /*  if (!isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
+            /*  if (!isNetworkAvailable(getActivity()) && appList.getAppSource().equals("Google Play")) {
                 populateViewsFromDB();
                 Log.w(MainActivity.TAG, "setUserVisibleHint: populateViewsFromDB");
                 return;
             }*/
-                populateViews();
-            }
-
+            populateViews();
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         Log.w(MainActivity.TAG, "onCreateView");
         View view = inflater.inflate(R.layout.google_play_tab, container, false);
         ButterKnife.bind(view);
@@ -126,10 +126,13 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
     public void populateViews() {
 
         // AppList parsedAppList = appDetailPresenter.getGPData();
-        //  Log.w(MainActivity.TAG, " parsedAppList: " + GPDetailPageParser.parsedAppList.getGpInstalls());
+        //  Log.w(MainActivity.TAG, " parsedAppList: " +
+        // GPDetailPageParser.parsedAppList.getGpInstalls());
         if (GPDetailPageParser.parsedAppList != null) {
 
-            Log.w(MainActivity.TAG, " in populateViews: " + GPDetailPageParser.parsedAppList.getGpRating());
+            Log.w(
+                    MainActivity.TAG,
+                    " in populateViews: " + GPDetailPageParser.parsedAppList.getGpRating());
             tvCategory.setText(GPDetailPageParser.parsedAppList.getGpCategory());
             tvRating.setText(GPDetailPageParser.parsedAppList.getGpRating());
             tvInstalls.setText(GPDetailPageParser.parsedAppList.getGpInstalls());
@@ -150,33 +153,27 @@ public class GooglePlayTabFragment extends Fragment implements AppDetailContract
             tvPeople.setText(appGPApp.getGpPeople());
             tvUpdated.setText(appGPApp.getGpUpdated());
         }
-
     }
 
     @Override
-    public void showProgressDialog() {
-
-    }
+    public void showProgressDialog() {}
 
     @Override
-    public void dismissProgressDialog() {
-
-    }
+    public void dismissProgressDialog() {}
 
     @Override
-    public void populateOverallTrust() {
-
-    }
+    public void populateOverallTrust() {}
 
     @Override
-    public void setSearchAppsAdapter(ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {
-
-    }
+    public void setSearchAppsAdapter(
+            ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {}
 
     @Override
     public void populateOnlineTrust() {
         populateViews();
-        Log.i(MainActivity.TAG, "in populateOnlineTrust: " + GPDetailPageParser.parsedAppList.getOnlineTrust());
+        Log.i(
+                MainActivity.TAG,
+                "in populateOnlineTrust: " + GPDetailPageParser.parsedAppList.getOnlineTrust());
         tvOnlineTrust.setText(GPDetailPageParser.parsedAppList.getOnlineTrust());
     }
 }

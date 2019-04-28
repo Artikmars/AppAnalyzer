@@ -1,6 +1,5 @@
 package com.artamonov.appanalyzer.utils;
 
-
 /*
  * Copyright (C) 2017 The Android Open Source Project
  *
@@ -24,9 +23,9 @@ import java.util.concurrent.Executors;
 
 /**
  * Global executor pools for the whole application.
- * <p>
- * Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind
- * webservice requests).
+ *
+ * <p>Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait
+ * behind webservice requests).
  */
 public class AppExecutors {
 
@@ -51,5 +50,4 @@ public class AppExecutors {
     public Executor diskIO() {
         return diskIO;
     }
-
 }
