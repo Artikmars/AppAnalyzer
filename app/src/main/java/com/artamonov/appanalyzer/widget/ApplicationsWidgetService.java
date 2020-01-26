@@ -9,4 +9,5 @@ public class ApplicationsWidgetService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new ApplicationsWidgetFactory(getApplicationContext());
     }
+
 }

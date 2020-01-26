@@ -4,19 +4,20 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.artamonov.appanalyzer.contract.AppDetailContract;
 import com.artamonov.appanalyzer.network.GPDetailPageParser;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
 import com.artamonov.appanalyzer.utils.NetworkUtils;
+
 import java.util.ArrayList;
 
-public class SearchDetailActivity extends AppCompatActivity
-        implements AppDetailContract.AppDetailView {
+public class SearchDetailActivity extends AppCompatActivity implements AppDetailContract.AppDetailView {
 
     public static final String TAG = "myLogs";
     Activity activity = new Activity();
@@ -25,13 +26,9 @@ public class SearchDetailActivity extends AppCompatActivity
     // private List<Artist> artistItemList = new ArrayList<>();
     private ProgressDialog progressDialog;
     private AppDetailPresenter appDetailPresenter;
-    private TextView tvOverallTrust,
-            tvRating,
-            tvAppName,
-            tvVersion,
-            tvPeopleVoted,
-            tvDownloads,
+    private TextView tvOverallTrust, tvRating, tvAppName, tvVersion, tvPeopleVoted, tvDownloads,
             tvUpdated;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,21 +56,23 @@ public class SearchDetailActivity extends AppCompatActivity
             appDetailPresenter.parseGPData(link, getApplicationContext());
             Log.w(MainActivity.TAG, "IN SEARCH DETAIL: parse:");
         }
+
     }
 
     @Override
-    public void showProgressDialog() {}
+    public void showProgressDialog() {
+
+    }
 
     @Override
-    public void dismissProgressDialog() {}
+    public void dismissProgressDialog() {
+
+    }
 
     @Override
     public void populateOverallTrust() {
         // tvAppName.setText(R.id.search_app_name);
-        Log.w(
-                MainActivity.TAG,
-                "IN SEARCH DETAIL: populateOverallTrust: "
-                        + GPDetailPageParser.parsedAppList.getOnlineTrust());
+        Log.w(MainActivity.TAG, "IN SEARCH DETAIL: populateOverallTrust: " + GPDetailPageParser.parsedAppList.getOnlineTrust());
         tvOverallTrust.setText(GPDetailPageParser.parsedAppList.getOnlineTrust());
         tvRating.setText(GPDetailPageParser.parsedAppList.getGpRating());
         //   tvVersion.setText(R.id.search_app_version);
@@ -83,9 +82,13 @@ public class SearchDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void setSearchAppsAdapter(
-            ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {}
+    public void setSearchAppsAdapter(ArrayList<String> arrayAppNames, ArrayList<String> arrayLinks) {
+
+    }
 
     @Override
-    public void populateOnlineTrust() {}
+    public void populateOnlineTrust() {
+
+    }
 }
+

@@ -1,12 +1,14 @@
 package com.artamonov.appanalyzer.adapter;
 
-import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import android.util.Log;
 import com.artamonov.appanalyzer.MainActivity;
+
 import com.artamonov.appanalyzer.PhoneTabFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class MainPageAdapter extends FragmentPagerAdapter {
         fragmentTitlesList.add(titles);
     }
 
+
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
@@ -36,8 +39,7 @@ public class MainPageAdapter extends FragmentPagerAdapter {
             case 1:
                 return PhoneTabFragment.newInstance();
             case 2:
-                return PhoneTabFragment.newInstance();
-        }
+                return PhoneTabFragment.newInstance();        }
         return null;
     }
 
@@ -48,3 +50,4 @@ public class MainPageAdapter extends FragmentPagerAdapter {
         return fragmentTitlesList.size();
     }
 }
+

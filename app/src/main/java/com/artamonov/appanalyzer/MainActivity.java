@@ -26,16 +26,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import android.widget.TextView;
+
 import com.artamonov.appanalyzer.adapter.AppRecyclerViewAdapter;
 import com.artamonov.appanalyzer.adapter.MainPageAdapter;
+import com.artamonov.appanalyzer.adapter.SectionPageAdapter;
 import com.artamonov.appanalyzer.data.database.AppList;
+import com.artamonov.appanalyzer.utils.NetworkUtils;
 import com.artamonov.appanalyzer.widget.ApplicationsWidgetProvider;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.tabs.TabLayout;
@@ -44,7 +41,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import io.fabric.sdk.android.Fabric;
+
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,9 +55,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener,
-                AppRecyclerViewAdapter.ItemClickListener {
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
+
+
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
+        AppRecyclerViewAdapter.ItemClickListener {
+
 
     public static final String TAG = "myLogs";
 
@@ -77,15 +86,14 @@ public class MainActivity extends AppCompatActivity
     private ProgressDialog progressDialog;
     private AppRecyclerViewAdapter appRecyclerViewAdapter;
     private RecyclerView recyclerView;
-
     @BindView(R.id.main_tab_layout)
     TabLayout mainTabLayout;
-
     @BindView(R.id.main_view_pager)
     ViewPager mainViewPager;
 
-    public static double getOfflineTrustLevel(
-            long updatedTime, long runTime, String appSource, String permissionsAmount) {
+
+    public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
+                                              String permissionsAmount) {
 
         double daysAfterLastUpdate = dateDiff(updatedTime);
         double daysAfterLastRun = dateDiff(runTime);
@@ -104,23 +112,11 @@ public class MainActivity extends AppCompatActivity
         if (runTimeTrust > 1) {
             runTimeTrust = 1;
         }
-        double offlineTrust =
-                (0.25 * updatedTrust
-                                + 0.05 * runTimeTrust
-                                + 0.3 * sourceTrust
-                                + 0.4 * permissionsTrust)
-                        * 100;
-        Log.w(
-                MainActivity.TAG,
-                "OFFLINE: updatedTrust: "
-                        + 0.25 * updatedTrust
-                        + ", runTimeTrust: "
-                        + 0.05 * runTimeTrust
-                        + ", sourceTrust: "
-                        + 0.3 * sourceTrust
-                        + ", permissionsTrust: "
-                        + 0.4 * permissionsTrust);
+        double offlineTrust = (0.25 * updatedTrust + 0.05 * runTimeTrust + 0.3 * sourceTrust + 0.4 * permissionsTrust) * 100;
+        Log.w(MainActivity.TAG, "OFFLINE: updatedTrust: " + 0.25 * updatedTrust + ", runTimeTrust: "
+                + 0.05 * runTimeTrust + ", sourceTrust: " + 0.3 * sourceTrust + ", permissionsTrust: " + 0.4 * permissionsTrust);
         return (double) Math.round(offlineTrust * 100) / 100;
+
     }
 
     public static void getHighOfflineScoreApps() {
@@ -137,8 +133,7 @@ public class MainActivity extends AppCompatActivity
     public static void getMiddleOfflineScoreApps() {
         int count = 0;
         for (int i = 0; i < installedApps.size(); i++) {
-            if (installedApps.get(i).getOfflineTrust() >= 60
-                    && installedApps.get(i).getOfflineTrust() < 80) {
+            if (installedApps.get(i).getOfflineTrust() >= 60 && installedApps.get(i).getOfflineTrust() < 80) {
                 count++;
             }
         }
@@ -155,6 +150,7 @@ public class MainActivity extends AppCompatActivity
         lowOfflineScoreApps = count;
     }
 
+
     static int dateDiffGp(String gpPublished) {
         if (gpPublished == null) {
             return 0;
@@ -168,9 +164,7 @@ public class MainActivity extends AppCompatActivity
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
 
-            int day =
-                    Integer.parseInt(
-                            gpPublishedArray[1].substring(0, gpPublishedArray[1].length() - 1));
+            int day = Integer.parseInt(gpPublishedArray[1].substring(0, gpPublishedArray[1].length() - 1));
             int year = Integer.parseInt(gpPublishedArray[2]);
             Calendar thatDay = Calendar.getInstance();
             thatDay.set(Calendar.DAY_OF_MONTH, day);
@@ -179,12 +173,12 @@ public class MainActivity extends AppCompatActivity
 
             Calendar today = Calendar.getInstance();
 
-            return (int)
-                    ((today.getTimeInMillis() - thatDay.getTimeInMillis()) / (60 * 60 * 24 * 1000));
+            return (int) ((today.getTimeInMillis() - thatDay.getTimeInMillis()) / (60 * 60 * 24 * 1000));
         } catch (ParseException e) {
             e.printStackTrace();
             return 0;
         }
+
     }
 
     static int getSourceTrust(String appSource) {
@@ -195,7 +189,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     static double dateDiff(long timestamp) {
-        // timestamp - 23.08.2018 at 02:45:48
+        //timestamp - 23.08.2018 at 02:45:48
         if (timestamp == 0) {
             return 0;
         }
@@ -213,12 +207,10 @@ public class MainActivity extends AppCompatActivity
 
     public byte[] drawableToByte(Drawable drawable) {
 
+
         // Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        final Bitmap bitmap =
-                Bitmap.createBitmap(
-                        drawable.getIntrinsicWidth(),
-                        drawable.getIntrinsicHeight(),
-                        Bitmap.Config.ARGB_8888);
+        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
@@ -232,7 +224,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Crashlytics
+        //Crashlytics
         Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_main);
@@ -251,6 +243,7 @@ public class MainActivity extends AppCompatActivity
         // progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 
+
         isFirstRun = checkFirstRun();
 
         mainTabLayout.setupWithViewPager(mainViewPager);
@@ -259,14 +252,14 @@ public class MainActivity extends AppCompatActivity
         adapter.setPageTitles(getResources().getString(R.string.applications));
         mainViewPager.setAdapter(adapter);
 
-        //        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this,
-        // installedApps, this);
-        //        recyclerView = findViewById(R.id.app_list);
-        //        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        //        recyclerView.setAdapter(appRecyclerViewAdapter);
+//        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
+//        recyclerView = findViewById(R.id.app_list);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//        recyclerView.setAdapter(appRecyclerViewAdapter);
 
         new getInstalledApplicationsTask().execute();
         setupSharedPreferences();
+
     }
 
     @Override
@@ -295,19 +288,15 @@ public class MainActivity extends AppCompatActivity
             // This is just a normal run
             Log.w(MainActivity.TAG, "onCheck: normal run: " + isFirstRun);
 
-        } else if (savedVersionCode == DOES_NOT_EXIST
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+        } else if (savedVersionCode == DOES_NOT_EXIST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             startActivity(intent);
             isFirstRun = true;
             Log.w(MainActivity.TAG, "onCheck: savedVersionCode == DOES_NOT_EXIST " + isFirstRun);
         }
-        // upgrade case  Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: "
-        // + isFirstRun);
+        //upgrade case  Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
         else if (currentVersionCode > savedVersionCode) {
-            Log.w(
-                    MainActivity.TAG,
-                    "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
+            Log.w(MainActivity.TAG, "onCheck: currentVersionCode > savedVersionCode: " + isFirstRun);
         }
         // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
@@ -316,11 +305,12 @@ public class MainActivity extends AppCompatActivity
 
     private void setupSharedPreferences() {
 
-        SharedPreferences sharedPreferences =
-                androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(this);
         loadSourceFromPreferences(sharedPreferences);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -332,14 +322,8 @@ public class MainActivity extends AppCompatActivity
                 getMiddleOfflineScoreApps();
                 getLowOfflineScoreApps();
                 Intent intent = new Intent(this, OverviewActivity.class);
-                Log.i(
-                        TAG,
-                        "applications_amount: "
-                                + installedApps.size()
-                                + " high_offline_score_apps: "
-                                + highOfflineScoreApps
-                                + "middle_offline_score_apps: "
-                                + middleOfflineScoreApps);
+                Log.i(TAG, "applications_amount: " + installedApps.size() + " high_offline_score_apps: " + highOfflineScoreApps
+                        + "middle_offline_score_apps: " + middleOfflineScoreApps);
                 intent.putExtra("applications_amount", installedApps.size());
                 intent.putExtra("high_offline_score_apps", highOfflineScoreApps);
                 intent.putExtra("middle_offline_score_apps", middleOfflineScoreApps);
@@ -360,8 +344,7 @@ public class MainActivity extends AppCompatActivity
     private String[] getRequestedPermissions(final String appPackage) {
         String[] requestedPermissions = null;
         try {
-            PackageInfo pi =
-                    getPackageManager().getPackageInfo(appPackage, PackageManager.GET_PERMISSIONS);
+            PackageInfo pi = getPackageManager().getPackageInfo(appPackage, PackageManager.GET_PERMISSIONS);
             requestedPermissions = pi.requestedPermissions;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -374,10 +357,7 @@ public class MainActivity extends AppCompatActivity
         ArrayList<String> dangerousPermissionsList = new ArrayList<>();
         for (int i = 0; i < permissionsArray.length; i++) {
             try {
-                PermissionInfo permissionInfo =
-                        getPackageManager()
-                                .getPermissionInfo(
-                                        permissionsArray[i], PackageManager.GET_META_DATA);
+                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permissionsArray[i], PackageManager.GET_META_DATA);
                 switch (permissionInfo.protectionLevel) {
                     case PermissionInfo.PROTECTION_DANGEROUS:
                         dangerousPermissionsList.add(permissionsArray[i]);
@@ -396,13 +376,8 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < dangerousPermissionsList.size(); i++) {
             PermissionGroupInfo permissionGroupInfo = null;
             try {
-                PermissionInfo permissionInfo =
-                        getPackageManager()
-                                .getPermissionInfo(
-                                        dangerousPermissionsList.get(i),
-                                        PackageManager.GET_META_DATA);
-                permissionGroupInfo =
-                        getPackageManager().getPermissionGroupInfo(permissionInfo.group, 0);
+                PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(dangerousPermissionsList.get(i), PackageManager.GET_META_DATA);
+                permissionGroupInfo = getPackageManager().getPermissionGroupInfo(permissionInfo.group, 0);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
@@ -415,6 +390,7 @@ public class MainActivity extends AppCompatActivity
         permissionGroups.addAll(tempSet);
 
         return permissionGroups;
+
     }
 
     private String getAppSource(String appSourceType, PackageInfo p) {
@@ -441,23 +417,27 @@ public class MainActivity extends AppCompatActivity
 
         return new SimpleDateFormat(getString(R.string.date_format), Locale.GERMAN)
                 .format(new Date(time));
+
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {}
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-    private void loadSourceFromPreferences(SharedPreferences sharedPreferences) {}
+    }
+
+    private void loadSourceFromPreferences(SharedPreferences sharedPreferences) {
+
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-        int appWidgetIds[] =
-                appWidgetManager.getAppWidgetIds(
-                        new ComponentName(
-                                getApplicationContext(), ApplicationsWidgetProvider.class));
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                new ComponentName(getApplicationContext(), ApplicationsWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lvAppWidget);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -465,6 +445,7 @@ public class MainActivity extends AppCompatActivity
         inflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public void onItemClick(int position) {
@@ -475,7 +456,7 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(getString(R.string.item_logo), drawableToByte(appList.getIcon()));
         startActivity(intent);
         Log.i(TAG, "onItemClick: startActivity(intent)");
-        /* if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+       /* if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
             startActivity(intent, bundle);
         } else {
@@ -491,22 +472,24 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected List<AppList> doInBackground(Void... voids) {
 
-            /**
-             * @param time = current time
-             * @param delta = initial period
-             * @param interval = time - delta (it is the time interval which is used by UsageStats
-             *     for extracting the data)
+
+            /** @param time = current time
+             *  @param delta = initial period
+             *  @param interval = time - delta (it is the time interval which is used by UsageStats
+             *                  for extracting the data)
+             *
              */
+
             List<AppList> res = new ArrayList<>();
             List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
             Calendar c = Calendar.getInstance();
             c.add(Calendar.YEAR, -1);
             long begin = c.getTimeInMillis();
             long end = System.currentTimeMillis();
-            UsageStatsManager usageStatsManager =
-                    (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-            mListUsageStats =
-                    usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, begin, end);
+            UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+            mListUsageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST,
+                    begin, end);
+
 
             for (int i = 0; i < packs.size(); i++) {
                 progressStatus = progressStatus + packs.size() / 100;
@@ -521,8 +504,7 @@ public class MainActivity extends AppCompatActivity
                     appList.setPackageName(packageName);
                     // Log.w(MainActivity.TAG, "packageName: " + packageName);
                     appList.setName(p.applicationInfo.loadLabel(getPackageManager()).toString());
-                    // Log.w(MainActivity.TAG, "app name: " +
-                    // p.applicationInfo.loadLabel(getPackageManager()).toString());
+                    // Log.w(MainActivity.TAG, "app name: " + p.applicationInfo.loadLabel(getPackageManager()).toString());
                     appList.setVersion(p.versionName);
                     long lastUpdatedTimeLong = p.lastUpdateTime;
                     String lastUpdateTime = currentMilliSecondsToDate(lastUpdatedTimeLong);
@@ -536,15 +518,11 @@ public class MainActivity extends AppCompatActivity
 
                     String[] appRequestedPermissionsArray = getRequestedPermissions(packageName);
                     if (appRequestedPermissionsArray != null) {
-                        Integer dangerousPermissionsAmount =
-                                getDangerousPermissions(appRequestedPermissionsArray).size();
-                        String dangerousPermissionsAmountString =
-                                Integer.toString(dangerousPermissionsAmount);
+                        Integer dangerousPermissionsAmount = getDangerousPermissions(appRequestedPermissionsArray).size();
+                        String dangerousPermissionsAmountString = Integer.toString(dangerousPermissionsAmount);
                         appList.setDangerousPermissionsAmount(dangerousPermissionsAmountString);
 
-                        ArrayList<String> permissionGroupsList =
-                                getPermissionGroups(
-                                        getDangerousPermissions(appRequestedPermissionsArray));
+                        ArrayList<String> permissionGroupsList = getPermissionGroups(getDangerousPermissions(appRequestedPermissionsArray));
                         String permissionGroupsString = TextUtils.join("\n", permissionGroupsList);
                         appList.setPermissionGroups(permissionGroupsString);
 
@@ -554,41 +532,34 @@ public class MainActivity extends AppCompatActivity
                         appList.setDangerousPermissionsAmount("0");
                     }
 
-                    // Connect to the Firebase Realtime Database
+
+                    //Connect to the Firebase Realtime Database
                     if (isFirstRun) {
-                        DatabaseReference permissionsReference =
-                                FirebaseDatabase.getInstance()
-                                        .getReference(getString(R.string.perm_group_amount));
+                        DatabaseReference permissionsReference = FirebaseDatabase
+                                .getInstance()
+                                .getReference(getString(R.string.perm_group_amount));
                         Log.w(MainActivity.TAG, "permissionsReference: " + permissionsReference);
                         String id = permissionsReference.push().getKey();
 
-                        permissionsReference
-                                .child(id)
-                                .addValueEventListener(
-                                        new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot snapshot) {
-                                                Log.w(
-                                                        MainActivity.TAG,
-                                                        "onDataChange: " + snapshot.getValue());
-                                            }
+                        permissionsReference.child(id).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                Log.w(MainActivity.TAG, "onDataChange: " + snapshot.getValue());
+                            }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                                Log.w(
-                                                        MainActivity.TAG,
-                                                        "onCancelled: "
-                                                                + databaseError.getMessage());
-                                            }
-                                        });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(MainActivity.TAG, "onCancelled: " + databaseError.getMessage());
+                            }
+                        });
+
 
                         Log.w(MainActivity.TAG, "id: " + id);
                         if (id != null) {
                             permissionsReference.child(id).setValue(permissionGroupAmount);
-                            Log.w(
-                                    MainActivity.TAG,
-                                    "permissionGroupAmount: " + permissionGroupAmount);
+                            Log.w(MainActivity.TAG, "permissionGroupAmount: " + permissionGroupAmount);
                         }
+
 
                     } else {
                         Log.w(MainActivity.TAG, "not first run");
@@ -623,12 +594,8 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-                    appList.setOfflineTrust(
-                            getOfflineTrustLevel(
-                                    lastUpdatedTimeLong,
-                                    lastTimeExecuted,
-                                    appSource,
-                                    permissionGroupAmount));
+                    appList.setOfflineTrust(getOfflineTrustLevel(lastUpdatedTimeLong, lastTimeExecuted,
+                            appSource, permissionGroupAmount));
                     appList.setIcon(p.applicationInfo.loadIcon(getPackageManager()));
                     res.add(appList);
                 }
@@ -657,21 +624,20 @@ public class MainActivity extends AppCompatActivity
             installedApps.addAll(appLists);
             // installedApps = appListотs;
             //  recyclerView.setAdapter(appRecyclerViewAdapter);
-            if (appRecyclerViewAdapter != null) {
-                appRecyclerViewAdapter.notifyDataSetChanged();
-            }
+         if (appRecyclerViewAdapter != null)  {
+            appRecyclerViewAdapter.notifyDataSetChanged();}
             progressDialog.setProgress(100);
             progressDialog.dismiss();
 
             applicationsWidgetListUnsorted = installedApps;
-            Collections.sort(
-                    applicationsWidgetListUnsorted,
-                    new Comparator<AppList>() {
-                        @Override
-                        public int compare(AppList appList1, AppList appList2) {
-                            return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
-                        }
-                    });
+            Collections.sort(applicationsWidgetListUnsorted, new Comparator<AppList>() {
+                @Override
+                public int compare(AppList appList1, AppList appList2) {
+                    return (int) (appList1.getOfflineTrust() - appList2.getOfflineTrust());
+                }
+            });
+
         }
+
     }
 }

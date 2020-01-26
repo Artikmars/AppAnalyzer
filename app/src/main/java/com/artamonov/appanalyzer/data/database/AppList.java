@@ -1,17 +1,19 @@
 package com.artamonov.appanalyzer.data.database;
 
-import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import android.graphics.drawable.Drawable;
+import androidx.annotation.NonNull;
 
 @Entity(tableName = "Application")
 public class AppList {
     // @PrimaryKey(autoGenerate = true)
     // private int id;
     private String name;
-    @PrimaryKey @NonNull private String packageName;
+    @PrimaryKey
+    @NonNull
+    private String packageName;
     private String version;
     private String lastUpdateTime;
     private long lastUpdateTimeInMilliseconds;
@@ -31,11 +33,11 @@ public class AppList {
     public void setGpCategory(String gpCategory) {
         this.gpCategory = gpCategory;
     }
-
     private String gpUpdated;
     private String gpUpdatedInMilliseconds;
 
-    @Ignore private Drawable icon;
+    @Ignore
+    private Drawable icon;
     private byte[] byteIcon;
     private boolean isOnline;
     private String appSource;
@@ -51,18 +53,12 @@ public class AppList {
     public void setOnlineTrust(String onlineTrust) {
         this.onlineTrust = onlineTrust;
     }
-
     private String dangerousPermissionsAmount;
     private String permissionGroups;
     private String permissionGroupsAmount;
 
-    public AppList(
-            String packageName,
-            String versionName,
-            String gpInstalls,
-            String gpPeople,
-            String gpRating,
-            String gpUpdated) {
+    public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
+                   String gpRating, String gpUpdated) {
         //  this.id = id;
         this.packageName = packageName;
         this.version = versionName;
@@ -72,8 +68,9 @@ public class AppList {
         this.gpUpdated = gpUpdated;
     }
 
-    public AppList() {}
+    public AppList() {
 
+    }
     public long getLastUpdateTimeInMilliseconds() {
         return lastUpdateTimeInMilliseconds;
     }
@@ -134,7 +131,7 @@ public class AppList {
     private ArrayList<String> requestedPermissionsProtectionLevels;
     private ArrayList<String> grantedPermissionsProtectionLevels;*/
 
-    /*  @Ignore
+  /*  @Ignore
     public AppList(String packageName, String versionName, String gpInstalls, String gpPeople,
                    String gpRating, String gpUpdated) {
         this.packageName = packageName;
@@ -272,4 +269,5 @@ public class AppList {
     public void setLastRunTime(String lastRunTime) {
         this.lastRunTime = lastRunTime;
     }
+
 }

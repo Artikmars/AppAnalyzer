@@ -25,10 +25,6 @@ buildscript {
     }
 }
 
-plugins {
-    id "com.diffplug.gradle.spotless" version "3.23.0"
-}
-
 allprojects {
     repositories {
         google()
@@ -39,11 +35,6 @@ allprojects {
     }
 }
 
-apply plugin: 'java'
-spotless {
-    java {
-        target '**/*.java'
-        removeUnusedImports()
-        googleJavaFormat().aosp()
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

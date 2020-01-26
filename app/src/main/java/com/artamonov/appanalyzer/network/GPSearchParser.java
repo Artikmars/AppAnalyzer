@@ -2,16 +2,19 @@ package com.artamonov.appanalyzer.network;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.artamonov.appanalyzer.MainActivity;
 import com.artamonov.appanalyzer.data.database.AppList;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class GPSearchParser extends AsyncTask<Void, Void, Void> {
     public static AppList parsedAppList;
@@ -31,10 +34,13 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
         this.appName = appName;
     }
 
+
     @Override
     protected void onPostExecute(Void result) {
 
         appDetailPresenter.setSearchAppsAdapter(arrayAppNames, arrayListWithUniqueValues);
+
+
     }
 
     @Override
@@ -45,8 +51,7 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
         try {
 
             document = Jsoup.connect(gpUrl).get();
-            // Elements links =
-            // document.select("a[href^=https://play.google.com/store/apps/details?id=]");
+            // Elements links = document.select("a[href^=https://play.google.com/store/apps/details?id=]");
             //   Elements links2 = document.select("div.card-click-target");
             // Elements links3 = document.select("img[alt]"); - work!
             Elements links3 = document.getElementsByClass("cover-outer-align");
@@ -59,7 +64,7 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
             }
             //  Elements links4 = links3.getElementsByTag("img");
             //  Log.w(MainActivity.TAG, "link3: " + links4);
-            /*  for (Element link : links4) {
+          /*  for (Element link : links4) {
               String link5 = link.attr("alt");
                 Log.w(MainActivity.TAG, "link5: " + link5);
             }*/
@@ -72,13 +77,11 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
             Elements links = document.select("div.details");
             Elements links2 = links.select("a[href]");
 
-            //  Elements links =
-            // document.select("div:contains(https://play.google.com/store/apps/details?id)");
-            //  Elements links =
-            // document.select("a[href^=https://play.google.com/store/apps/details?id=]");
+
+            //  Elements links = document.select("div:contains(https://play.google.com/store/apps/details?id)");
+            //  Elements links = document.select("a[href^=https://play.google.com/store/apps/details?id=]");
             // String absHref = links.attr("abs:href");
-            //  Elements links =
-            // document.select("href^=https://play.google.com/store/apps/details?id=");
+            //  Elements links = document.select("href^=https://play.google.com/store/apps/details?id=");
             //  content = document.select("div:contains(Additional Information)").get(1);
 
             arrayLinks = new ArrayList<>();
@@ -99,80 +102,81 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
                     set.add(item);
                 }
 
+
                 //   Log.w(MainActivity.TAG, "links: " + links);
 
                 // Log.w(MainActivity.TAG, "links.text(): " + links2);
                 //  Log.w(MainActivity.TAG, "links.text(): " + links3);
-                // Log.w(MainActivity.TAG, "links.text(): " + links.get(0));
+                //Log.w(MainActivity.TAG, "links.text(): " + links.get(0));
                 //  Log.w(MainActivity.TAG, "links.text(): " + links.text());
                 // Log.w(MainActivity.TAG, "links3: " + links4);
                 //   Log.w(MainActivity.TAG, "links3: " + content);
 
                 //  Log.w(MainActivity.TAG, "links.attr(): " + links.attr("abs:href"));
                 //  Log.w(MainActivity.TAG, "absHref: " + absHref);
-                /*    Log.w(MainActivity.TAG, "links.text(): " + links.get(0));
-                Log.w(MainActivity.TAG, "links.text(): " + links.get(1));
-                Log.w(MainActivity.TAG, "links.text(): " + links.get(2));
-                Log.w(MainActivity.TAG, "links.text(): " + links.get(3));*/
-                /*String gpParsedString = content.text();
-                String[] ratingArray = gpParsedString.split("Policy ");
-                String[] gpRatingArray = ratingArray[1].split(" ", 2);
-                String gpRating = gpRatingArray[0];
+        /*    Log.w(MainActivity.TAG, "links.text(): " + links.get(0));
+            Log.w(MainActivity.TAG, "links.text(): " + links.get(1));
+            Log.w(MainActivity.TAG, "links.text(): " + links.get(2));
+            Log.w(MainActivity.TAG, "links.text(): " + links.get(3));*/
+            /*String gpParsedString = content.text();
+            String[] ratingArray = gpParsedString.split("Policy ");
+            String[] gpRatingArray = ratingArray[1].split(" ", 2);
+            String gpRating = gpRatingArray[0];
 
-                String ratingPeopleAmount = gpRatingArray[1];
-                String[] gpRatingPeopleAmountArray = ratingPeopleAmount.split(" ", 2);
-                String gpRatingPeopleAmount = gpRatingPeopleAmountArray[0];
-                String[] updatedTime = gpParsedString.split("Updated ");
-                String[] updatedTimeArray = updatedTime[1].split(" ", 5);
-                String gpUpdatedTime = updatedTimeArray[0] + " " + updatedTimeArray[1] + " " + updatedTimeArray[2];
+            String ratingPeopleAmount = gpRatingArray[1];
+            String[] gpRatingPeopleAmountArray = ratingPeopleAmount.split(" ", 2);
+            String gpRatingPeopleAmount = gpRatingPeopleAmountArray[0];
+            String[] updatedTime = gpParsedString.split("Updated ");
+            String[] updatedTimeArray = updatedTime[1].split(" ", 5);
+            String gpUpdatedTime = updatedTimeArray[0] + " " + updatedTimeArray[1] + " " + updatedTimeArray[2];
 
-                String[] installsArray = gpParsedString.split("Installs ");
-                String[] gpInstallsArray = installsArray[1].split(" ", 2);
-                String gpInstalls = gpInstallsArray[0];
+            String[] installsArray = gpParsedString.split("Installs ");
+            String[] gpInstallsArray = installsArray[1].split(" ", 2);
+            String gpInstalls = gpInstallsArray[0];
 
-                if (content2 != null) {
-                    Log.i(MainActivity.TAG, "GP content2: " + content2.text());
-                    Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
-                }
+            if (content2 != null) {
+                Log.i(MainActivity.TAG, "GP content2: " + content2.text());
+                Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
+            }
 
-                //Validation
-                try {
-                    Float.parseFloat(gpRating);
-                } catch (NumberFormatException e) {
-                    gpRating = "0";
-                }
+            //Validation
+            try {
+                Float.parseFloat(gpRating);
+            } catch (NumberFormatException e) {
+                gpRating = "0";
+            }
 
-                String gpPeopleWithoutCommas = gpRatingPeopleAmount.replace(",", "");
-                try {
-                    Integer.parseInt(gpPeopleWithoutCommas);
-                } catch (NumberFormatException e) {
-                    gpPeopleWithoutCommas = "0";
-                }
+            String gpPeopleWithoutCommas = gpRatingPeopleAmount.replace(",", "");
+            try {
+                Integer.parseInt(gpPeopleWithoutCommas);
+            } catch (NumberFormatException e) {
+                gpPeopleWithoutCommas = "0";
+            }
 
-                String gpInstallsWithoutCommas = gpInstalls.replace(",", "");
-                String gpInstallsWithoutCommasAndPlus = gpInstallsWithoutCommas.replace("+", "");
-                try {
-                    Integer.parseInt(gpInstallsWithoutCommasAndPlus);
+            String gpInstallsWithoutCommas = gpInstalls.replace(",", "");
+            String gpInstallsWithoutCommasAndPlus = gpInstallsWithoutCommas.replace("+", "");
+            try {
+                Integer.parseInt(gpInstallsWithoutCommasAndPlus);
 
-                } catch (NumberFormatException e) {
-                    gpInstallsWithoutCommasAndPlus = "1";
-                }
+            } catch (NumberFormatException e) {
+                gpInstallsWithoutCommasAndPlus = "1";
+            }
 
-                try {
-                    new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH).parse(gpUpdatedTime);
-                } catch (ParseException e) {
-                    gpUpdatedTime = null;
-                }
+            try {
+                new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH).parse(gpUpdatedTime);
+            } catch (ParseException e) {
+                gpUpdatedTime = null;
+            }
 
-                parsedAppList = new AppList();
-                parsedAppList.setGpRating(gpRating);
-                parsedAppList.setGpPeople(gpPeopleWithoutCommas);
-                parsedAppList.setGpInstalls(gpInstallsWithoutCommasAndPlus);
-                parsedAppList.setGpUpdated(gpUpdatedTime);
-                parsedAppList.setPackageName(MainActivity.appList.getPackageName());
+            parsedAppList = new AppList();
+            parsedAppList.setGpRating(gpRating);
+            parsedAppList.setGpPeople(gpPeopleWithoutCommas);
+            parsedAppList.setGpInstalls(gpInstallsWithoutCommasAndPlus);
+            parsedAppList.setGpUpdated(gpUpdatedTime);
+            parsedAppList.setPackageName(MainActivity.appList.getPackageName());
 
-                Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpRating());
-                Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpUpdated());*/
+            Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpRating());
+            Log.w(MainActivity.TAG, " parsedAppList: " + parsedAppList.getGpUpdated());*/
 
             }
         } catch (IOException e1) {
@@ -182,4 +186,6 @@ public class GPSearchParser extends AsyncTask<Void, Void, Void> {
 
         return null;
     }
+
+
 }

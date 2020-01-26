@@ -1,11 +1,13 @@
 package com.artamonov.appanalyzer.data;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
+import android.os.AsyncTask;
+
 import com.artamonov.appanalyzer.data.database.AppDao;
 import com.artamonov.appanalyzer.data.database.AppDatabase;
 import com.artamonov.appanalyzer.data.database.AppList;
+
 import java.util.List;
 
 public class AppRepository {
@@ -32,14 +34,8 @@ public class AppRepository {
         new insertAsyncTask(appDao).execute(app);
     }
 
-    public void update(
-            String packageName,
-            String gpRating,
-            String gpPeople,
-            String gpInstalls,
-            String gpUpdated) {
-        // new updateGPDataAsyncTask(appDao).execute(packageName, gpRating, gpPeople, gpInstalls,
-        // gpUpdated);
+    public void update(String packageName, String gpRating, String gpPeople, String gpInstalls, String gpUpdated) {
+        // new updateGPDataAsyncTask(appDao).execute(packageName, gpRating, gpPeople, gpInstalls, gpUpdated);
         appDao.update(packageName, gpRating, gpPeople, gpInstalls, gpUpdated);
     }
 
@@ -67,21 +63,21 @@ public class AppRepository {
 }
 
   /*  private static class updateGPDataAsyncTask extends AsyncTask<String, Void, LiveData<AppList>> {
-          private AppDao taskDao;
+        private AppDao taskDao;
 
-          updateGPDataAsyncTask(AppDao dao) {
-              taskDao = dao;
-          }
+        updateGPDataAsyncTask(AppDao dao) {
+            taskDao = dao;
+        }
 
-          @Override
-          protected LiveData<AppList> doInBackground(String... packageName) {
-             return taskDao.update(packageName);
-          }
+        @Override
+        protected LiveData<AppList> doInBackground(String... packageName) {
+           return taskDao.update(packageName);
+        }
 
-          @Override
-          protected void onPostExecute(LiveData<AppList> app) {
-              super.onPostExecute(app);
-              //getGpData(app);
-          }
-      }
-  }*/
+        @Override
+        protected void onPostExecute(LiveData<AppList> app) {
+            super.onPostExecute(app);
+            //getGpData(app);
+        }
+    }
+}*/

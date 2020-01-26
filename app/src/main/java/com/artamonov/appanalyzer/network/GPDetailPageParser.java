@@ -1,25 +1,29 @@
 package com.artamonov.appanalyzer.network;
 
-import static com.artamonov.appanalyzer.MainActivity.TAG;
-import static com.artamonov.appanalyzer.MainActivity.appList;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.artamonov.appanalyzer.AppDetailActivity;
 import com.artamonov.appanalyzer.MainActivity;
 import com.artamonov.appanalyzer.R;
 import com.artamonov.appanalyzer.data.database.AppList;
 import com.artamonov.appanalyzer.presenter.AppDetailPresenter;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
+import static com.artamonov.appanalyzer.MainActivity.TAG;
+import static com.artamonov.appanalyzer.MainActivity.appList;
+
 
 public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
     public static AppList parsedAppList;
@@ -47,10 +51,7 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void result) {
 
-        // double onlineTrust =
-        // AppDetailActivity.getOnlineTrustLevel(GPDetailPageParser.parsedAppList.getGpInstalls(),
-        // GPDetailPageParser.parsedAppList.getGpPeople(),
-        // GPDetailPageParser.parsedAppList.getGpRating(),
+        // double onlineTrust = AppDetailActivity.getOnlineTrustLevel(GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
         //        GPDetailPageParser.parsedAppList.getGpUpdated());
         //  String onlTrust = String.valueOf(onlineTrust);
         // parsedAppList.setOnlineTrust(onlTrust);
@@ -58,16 +59,10 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
         appDetailPresenter.setOverallTrust();
 
         if (appLink == null) {
-            double overallTrust =
-                    AppDetailActivity.getOverallTrustLevel(
-                            MainActivity.appList.getLastUpdateTimeInMilliseconds(),
-                            MainActivity.appList.getLastRunTimeInMilliseconds(),
-                            MainActivity.appList.getAppSource(),
-                            GPDetailPageParser.parsedAppList.getGpInstalls(),
-                            GPDetailPageParser.parsedAppList.getGpPeople(),
-                            GPDetailPageParser.parsedAppList.getGpRating(),
-                            GPDetailPageParser.parsedAppList.getGpUpdated(),
-                            MainActivity.appList.getDangerousPermissionsAmount());
+            double overallTrust = AppDetailActivity.getOverallTrustLevel(MainActivity.appList.getLastUpdateTimeInMilliseconds(),
+                    MainActivity.appList.getLastRunTimeInMilliseconds(), MainActivity.appList.getAppSource(),
+                    GPDetailPageParser.parsedAppList.getGpInstalls(), GPDetailPageParser.parsedAppList.getGpPeople(), GPDetailPageParser.parsedAppList.getGpRating(),
+                    GPDetailPageParser.parsedAppList.getGpUpdated(), MainActivity.appList.getDangerousPermissionsAmount());
             String overTrust = String.valueOf(overallTrust);
             parsedAppList.setOverallTrust(overTrust);
             appDetailPresenter.setOverallTrust();
@@ -82,20 +77,14 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
             //  gpUrl = appLink + "&hl=en";
             gpUrl = appLink + context.getResources().getString(R.string.gp_link_prefix);
         } else {
-            // gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() +
-            // "&hl=en";
-            gpUrl =
-                    String.format(
-                            context.getResources().getString(R.string.gp_link),
-                            appList.getPackageName());
+            // gpUrl = "https://play.google.com/store/apps/details?id=" + appList.getPackageName() + "&hl=en";
+            gpUrl = String.format(context.getResources().getString(R.string.gp_link), appList.getPackageName());
         }
         Log.i(MainActivity.TAG, "gpUrl: " + gpUrl);
         try {
 
             document = Jsoup.connect(gpUrl).get();
-            content =
-                    document.select(context.getResources().getString(R.string.gp_additional_info))
-                            .get(1);
+            content = document.select(context.getResources().getString(R.string.gp_additional_info)).get(1);
 
             String gpParsedString = content.text();
             String[] ratingArray = gpParsedString.split("Policy ");
@@ -107,8 +96,7 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
             String gpRatingPeopleAmount = gpRatingPeopleAmountArray[0];
             String[] updatedTime = gpParsedString.split("Updated ");
             String[] updatedTimeArray = updatedTime[1].split(" ", 5);
-            String gpUpdatedTime =
-                    updatedTimeArray[0] + " " + updatedTimeArray[1] + " " + updatedTimeArray[2];
+            String gpUpdatedTime = updatedTimeArray[0] + " " + updatedTimeArray[1] + " " + updatedTimeArray[2];
 
             String[] installsArray = gpParsedString.split("Installs ");
             String[] gpInstallsArray = installsArray[1].split(" ", 2);
@@ -119,7 +107,7 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
                 Log.i(MainActivity.TAG, "GP content3: " + content2.toString());
             }
 
-            // Validation
+            //Validation
             try {
                 Float.parseFloat(gpRating);
             } catch (NumberFormatException e) {
@@ -148,8 +136,8 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
                 gpUpdatedTime = null;
             }
 
-            // Category Parsing
-            // applicationCategory
+            //Category Parsing
+            //applicationCategory
             document = Jsoup.connect(gpUrl).get();
             //  content = document.select("meta:contains(applicationCategory)").get(1);
             String gpParsedString2 = content.text();
@@ -166,6 +154,7 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
             Log.i(TAG, "itemprop: " + metaTags);
             Log.i(TAG, "itemprop: " + metaTags.text());
             Log.i(TAG, "itemprop: " + category);
+
 
             parsedAppList = new AppList();
             // parsedAppList.setGpCategory(category);
@@ -292,5 +281,9 @@ public class GPDetailPageParser extends AsyncTask<Void, Void, Void> {
             default:
                 parsedAppList.setGpCategory("Undefined");
         }
+
+
     }
+
+
 }

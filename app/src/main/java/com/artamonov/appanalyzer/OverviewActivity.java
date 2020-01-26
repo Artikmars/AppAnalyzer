@@ -2,10 +2,11 @@ package com.artamonov.appanalyzer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.widget.TextView;
+
 
 public class OverviewActivity extends AppCompatActivity {
 
@@ -25,16 +26,15 @@ public class OverviewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String appsAmount = String.valueOf(intent.getIntExtra("applications_amount", 0));
-        String highOfflineScoreApps =
-                String.valueOf(intent.getIntExtra("high_offline_score_apps", 0));
-        String middleOfflineScoreApps =
-                String.valueOf(intent.getIntExtra("middle_offline_score_apps", 0));
-        String lowOfflineScoreApps =
-                String.valueOf(intent.getIntExtra("low_offline_score_apps", 0));
+        String highOfflineScoreApps = String.valueOf(intent.getIntExtra("high_offline_score_apps", 0));
+        String middleOfflineScoreApps = String.valueOf(intent.getIntExtra("middle_offline_score_apps", 0));
+        String lowOfflineScoreApps = String.valueOf(intent.getIntExtra("low_offline_score_apps", 0));
 
         tvAppsAmount.setText(appsAmount);
         tvHighOfflineScoreApps.setText(highOfflineScoreApps);
         tvMiddleOfflineScoreApps.setText(middleOfflineScoreApps);
         tvLowOfflineScoreApps.setText(lowOfflineScoreApps);
+
+
     }
 }

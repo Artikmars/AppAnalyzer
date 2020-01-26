@@ -1,25 +1,25 @@
 package com.artamonov.appanalyzer.adapter;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.artamonov.appanalyzer.R;
 import com.artamonov.appanalyzer.data.database.AppList;
+
 import java.util.List;
 
-public class AppRecyclerViewAdapter
-        extends RecyclerView.Adapter<AppRecyclerViewAdapter.ViewHolder> {
+public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerViewAdapter.ViewHolder> {
 
     private static ItemClickListener listener;
     private List<AppList> appList;
 
-    public AppRecyclerViewAdapter(
-            Context context, List<AppList> appList, ItemClickListener itemClickListener) {
+    public AppRecyclerViewAdapter(Context context, List<AppList> appList, ItemClickListener itemClickListener) {
         this.appList = appList;
         listener = itemClickListener;
     }
@@ -27,16 +27,16 @@ public class AppRecyclerViewAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view =
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.app_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AppRecyclerViewAdapter.ViewHolder holder, int position) {
-        AppList applicationList = appList.get(position);
+        AppList applicationList =  appList.get(position);
         holder.appName.setText(applicationList.getName());
         holder.appLogo.setImageDrawable(applicationList.getIcon());
+
     }
 
     void setAppList(List<AppList> appList) {
@@ -68,6 +68,7 @@ public class AppRecyclerViewAdapter
         public void onClick(View view) {
             int position = getAdapterPosition();
             listener.onItemClick(position);
+
         }
     }
 }

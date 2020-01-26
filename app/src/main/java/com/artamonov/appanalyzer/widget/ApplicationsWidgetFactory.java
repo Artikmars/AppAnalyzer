@@ -3,10 +3,13 @@ package com.artamonov.appanalyzer.widget;
 import android.content.Context;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
+
 import com.artamonov.appanalyzer.MainActivity;
 import com.artamonov.appanalyzer.R;
 import com.artamonov.appanalyzer.data.database.AppList;
+
 import java.util.List;
+
 
 class ApplicationsWidgetFactory implements RemoteViewsFactory {
 
@@ -19,11 +22,13 @@ class ApplicationsWidgetFactory implements RemoteViewsFactory {
     }
 
     @Override
-    public void onCreate() {}
+    public void onCreate() {
+    }
 
     @Override
     public int getCount() {
         return widgetAppsList.size();
+
     }
 
     @Override
@@ -38,15 +43,13 @@ class ApplicationsWidgetFactory implements RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        RemoteViews rView =
-                new RemoteViews(context.getPackageName(), R.layout.applicaions_widget_item);
-        rView.setTextViewText(
-                R.id.tvItemApp,
-                widgetAppsList.get(position).getName()
-                        + ": "
-                        + widgetAppsList.get(position).getOfflineTrust());
+        RemoteViews rView = new RemoteViews(context.getPackageName(),
+                R.layout.applicaions_widget_item);
+        rView.setTextViewText(R.id.tvItemApp, widgetAppsList.get(position).getName() + ": " +
+                widgetAppsList.get(position).getOfflineTrust());
         return rView;
     }
+
 
     @Override
     public int getViewTypeCount() {
@@ -59,8 +62,14 @@ class ApplicationsWidgetFactory implements RemoteViewsFactory {
     }
 
     @Override
-    public void onDataSetChanged() {}
+    public void onDataSetChanged() {
+
+
+    }
 
     @Override
-    public void onDestroy() {}
+    public void onDestroy() {
+
+    }
+
 }
