@@ -26,16 +26,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.artamonov.appanalyzer.adapter.AppRecyclerViewAdapter;
-import com.artamonov.appanalyzer.adapter.MainPageAdapter;
-import com.artamonov.appanalyzer.adapter.SectionPageAdapter;
 import com.artamonov.appanalyzer.data.database.AppList;
-import com.artamonov.appanalyzer.utils.NetworkUtils;
 import com.artamonov.appanalyzer.widget.ApplicationsWidgetProvider;
 import com.crashlytics.android.Crashlytics;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,10 +55,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -86,10 +77,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private ProgressDialog progressDialog;
     private AppRecyclerViewAdapter appRecyclerViewAdapter;
     private RecyclerView recyclerView;
-    @BindView(R.id.main_tab_layout)
-    TabLayout mainTabLayout;
-    @BindView(R.id.main_view_pager)
-    ViewPager mainViewPager;
 
 
     public static double getOfflineTrustLevel(long updatedTime, long runTime, String appSource,
@@ -231,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ButterKnife.bind(this);
+
 
         // progressBar = findViewById(R.id.progressBar);
         //  progressBar.setVisibility(View.VISIBLE);
@@ -246,16 +233,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         isFirstRun = checkFirstRun();
 
-        mainTabLayout.setupWithViewPager(mainViewPager);
-        MainPageAdapter adapter = new MainPageAdapter(getSupportFragmentManager());
-        adapter.setPageTitles(getResources().getString(R.string.phone));
-        adapter.setPageTitles(getResources().getString(R.string.applications));
-        mainViewPager.setAdapter(adapter);
-
-//        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
-//        recyclerView = findViewById(R.id.app_list);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//        recyclerView.setAdapter(appRecyclerViewAdapter);
+        appRecyclerViewAdapter = new AppRecyclerViewAdapter(MainActivity.this, installedApps, this);
+        recyclerView = findViewById(R.id.app_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setAdapter(appRecyclerViewAdapter);
 
         new getInstalledApplicationsTask().execute();
         setupSharedPreferences();
@@ -624,8 +605,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             installedApps.addAll(appLists);
             // installedApps = appListотs;
             //  recyclerView.setAdapter(appRecyclerViewAdapter);
-         if (appRecyclerViewAdapter != null)  {
-            appRecyclerViewAdapter.notifyDataSetChanged();}
+            appRecyclerViewAdapter.notifyDataSetChanged();
             progressDialog.setProgress(100);
             progressDialog.dismiss();
 

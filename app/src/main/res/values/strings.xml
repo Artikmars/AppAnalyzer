@@ -83,7 +83,4 @@
     <string name="apps_with_low_score">Less than 60 score: </string>
     <string name="default_value" translatable="false">0</string>
 
-    <string name="phone">Phone</string>
-    <string name="applications">Applications</string>
-
 </resources>

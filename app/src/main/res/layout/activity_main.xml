@@ -5,41 +5,19 @@
     android:focusable="true"
     tools:context="com.artamonov.appanalyzer.MainActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/app_list"
+        android:descendantFocusability="afterDescendants"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:focusable="true"
+        android:scrollbars="none" />
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/main_tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="2dp"
-        android:focusable="true"
-        android:nextFocusUp="@id/trust_level"
-        android:nextFocusDown="@id/view_pager">
-
-
-    </com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/main_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/main_tab_layout"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="5dp"
-        android:focusable="true"
-        android:nextFocusUp="@id/tab_layout"
-        android:nextFocusDown="@id/adView">
-
-
-    </androidx.viewpager.widget.ViewPager>
 
 
 </RelativeLayout>
